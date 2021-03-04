@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-import argparse
-
 import pandas as pd
-
-from EmQuantAPI import *
-
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import Recorder
 from zvt.domain.quotes.bond import Bond1dKdata
-
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, now_pd_timestamp, TIME_FORMAT_DAY
+try:
+    from EmQuantAPI import *
+except:
+    pass
 
 class EmChinaBondKdataRecorder(Recorder):
     data_schema = Bond1dKdata
@@ -20,11 +18,11 @@ class EmChinaBondKdataRecorder(Recorder):
     def __init__(self, batch_size=10, force_update=True, sleeping_time=10) -> None:
         super().__init__(batch_size, force_update, sleeping_time)
 
-    # 调用登录函数（激活后使用，不需要用户名密码）
-    loginResult = c.start("ForceLogin=1", '')
-    if (loginResult.ErrorCode != 0):
-        print("login in fail")
-        exit()
+        # 调用登录函数（激活后使用，不需要用户名密码）
+        loginResult = c.start("ForceLogin=1", '')
+        if (loginResult.ErrorCode != 0):
+            print("login in fail")
+            exit()
 
     def run(self):
         from zvt.api import get_kdata

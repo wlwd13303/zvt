@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
-
 import pandas as pd
-from jqdatasdk import auth, logout, get_bars
-
 from zvt import init_log, zvt_env
 from zvt.api import get_kdata, AdjustType
 from zvt.api.quote import generate_kdata_id, get_kdata_schema
@@ -14,7 +11,10 @@ from zvt.recorders.joinquant.common import to_jq_trading_level, to_jq_entity_id
 from zvt.domain import Stock, StockKdataCommon, StockStatus,Stock1dHfqKdata,StockNames
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, now_pd_timestamp, TIME_FORMAT_DAY, TIME_FORMAT_ISO8601
-
+try:
+    from jqdatasdk import auth, logout, get_bars
+except:
+    pass
 
 class JqChinaStockKdataRecorder(FixedCycleDataRecorder):
     entity_provider = 'joinquant'

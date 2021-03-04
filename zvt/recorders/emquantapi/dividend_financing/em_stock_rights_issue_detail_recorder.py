@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from EmQuantAPI import *
-
-from zvt.api import AdjustType, get_kdata, TIME_FORMAT_DAY, TIME_FORMAT_ISO8601, get_str_schema
-from zvt.contract import IntervalLevel
+from zvt.api import TIME_FORMAT_DAY, get_str_schema
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import TimeSeriesDataRecorder
 from zvt.domain import RightsIssueDetail
@@ -11,7 +8,10 @@ from zvt.domain import StockDetail
 from zvt.recorders.emquantapi.common import mainCallback, to_em_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import now_pd_timestamp, to_time_str
-
+try:
+    from EmQuantAPI import *
+except:
+    pass
 
 class EmDividendDetailRecorder(TimeSeriesDataRecorder):
     entity_provider = 'joinquant'

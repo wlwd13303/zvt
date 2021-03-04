@@ -2,7 +2,6 @@
 import time
 
 import pandas as pd
-from jqdatasdk import auth, get_price, normalize_code, get_query_count, get_bars, logout
 
 from zvt import zvt_env
 from zvt.api import get_kdata_schema
@@ -12,8 +11,13 @@ from zvt.contract.recorder import FixedCycleDataRecorder
 from zvt.recorders.joinquant.common import to_jq_trading_level
 
 from zvt.utils.time_utils import to_time_str, now_pd_timestamp, TIME_FORMAT_DAY, TIME_FORMAT_ISO8601
-
 from zvt.domain import Index, IndexKdataCommon
+
+try:
+    from jqdatasdk import auth, get_price, normalize_code, get_query_count, get_bars, logout
+except:
+    pass
+
 code_map_choice = {
     '000001': 'SH', '000002': 'SH', '000003': 'SH',
     '000010': 'SH', '000016': 'SH', '000017': 'SH',
@@ -39,9 +43,10 @@ class ChinaIndexDayKdataRecorder(FixedCycleDataRecorder):
 
     provider = 'joinquant'
     data_schema = IndexKdataCommon
+
     def __init__(self,
                  entity_type='index',
-                 exchanges=['sh','sz'],
+                 exchanges=['sh', 'sz'],
                  entity_ids=None,
                  codes=None,
                  batch_size=10,
@@ -62,7 +67,6 @@ class ChinaIndexDayKdataRecorder(FixedCycleDataRecorder):
         self.jq_trading_level = to_jq_trading_level(level)
         self.data_schema = get_kdata_schema(entity_type=entity_type, level=level)
 
-
         super().__init__('index', exchanges, entity_ids, codes, batch_size, force_update, sleeping_time,
                          default_size, real_time, fix_duplicate_way, start_timestamp, end_timestamp, close_hour,
                          close_minute, level, kdata_use_begin_time, one_day_trading_minutes)
@@ -76,7 +80,7 @@ class ChinaIndexDayKdataRecorder(FixedCycleDataRecorder):
     def record(self, entity, start, end, size, timestamps):
 
         now_date = to_time_str(now_pd_timestamp())
-        security = entity.id[-6:]+'.'+entity.exchange.replace('sh','XSHG').replace('sz','XSHE')
+        security = entity.id[-6:] + '.' + entity.exchange.replace('sh', 'XSHG').replace('sz', 'XSHE')
         try:
             if not self.end_timestamp:
                 df = get_bars(security,
@@ -99,12 +103,11 @@ class ChinaIndexDayKdataRecorder(FixedCycleDataRecorder):
             return None
         df.rename(columns={'money': 'turnover', 'date': 'timestamp'}, inplace=True)
         df['level'] = self.level.value
-        df['entity_id'] = entity.id.replace('cn',security[-4:]).replace('XSHG','sh').replace('XSHE','sz')
+        df['entity_id'] = entity.id.replace('cn', security[-4:]).replace('XSHG', 'sh').replace('XSHE', 'sz')
         df['code'] = entity.id[-6:]
         df['timestamp'] = pd.to_datetime(df['timestamp'])
         df['provider'] = self.provider
         df['name'] = entity.name
-
 
         def generate_kdata_id(se):
             if self.level >= IntervalLevel.LEVEL_1DAY:
@@ -116,6 +119,7 @@ class ChinaIndexDayKdataRecorder(FixedCycleDataRecorder):
 
         df_to_db(df=df, data_schema=self.data_schema, provider=self.provider, force_update=self.force_update)
         return None
+
 
 __all__ = ['ChinaIndexDayKdataRecorder']
 

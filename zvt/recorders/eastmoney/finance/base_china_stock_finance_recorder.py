@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import auth, query, indicator, get_fundamentals, logout
-
 from zvt import zvt_env
 from zvt.api.quote import to_jq_report_period
 from zvt.contract.api import get_data
@@ -12,7 +10,10 @@ from zvt.recorders.joinquant.common import to_jq_entity_id
 from zvt.utils.pd_utils import index_df
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, to_pd_timestamp
-
+try:
+    from jqdatasdk import auth, query, indicator, get_fundamentals, logout
+except:
+    pass
 
 class BaseChinaStockFinanceRecorder(EastmoneyTimestampsDataRecorder):
     finance_report_type = None

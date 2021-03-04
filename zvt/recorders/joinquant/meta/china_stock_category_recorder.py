@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import auth, get_query_count, get_industries, get_industry_stocks, finance, query, get_concepts, \
-    get_concept_stocks
 
 from zvt import zvt_env
 from zvt.contract.api import df_to_db, get_data
@@ -10,7 +8,11 @@ from zvt.recorders.joinquant.common import to_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import now_pd_timestamp, to_time_str, TIME_FORMAT_DAY
 from zvt.domain import BlockStock, Block, Block1dKdata, BlockMoneyFlow,Stock
-
+try:
+    from jqdatasdk import auth, get_query_count, get_industries, get_industry_stocks, finance, query, get_concepts, \
+        get_concept_stocks
+except:
+    pass
 
 class JqChinaBlockRecorder(Recorder):
     provider = 'joinquant'

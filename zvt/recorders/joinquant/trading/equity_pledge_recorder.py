@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from jqdatasdk import auth, get_query_count, finance, query
 import pandas as pd
-from zvt.recorders.joinquant.common import to_jq_entity_id
-
 from zvt import zvt_env
 from zvt.api import get_str_schema, to_time_str, pd_is_not_null, TIME_FORMAT_DAY
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import FixedCycleDataRecorder
 from zvt.domain import EquityPledge
 from zvt.domain import Stock
-
+try:
+    from zvt.recorders.joinquant.common import to_jq_entity_id
+except:
+    pass
 
 class EquityPledgeRecorder(FixedCycleDataRecorder):
     """

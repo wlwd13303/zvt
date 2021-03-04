@@ -8,7 +8,7 @@ from zvt.contract.register import register_schema
 FinanceBase = declarative_base()
 
 
-class StockPerformanceForecast(FinanceBase,Mixin):
+class StockPerformanceForecast(FinanceBase, Mixin):
     """业绩预告"""
     __tablename__ = 'stock_performance_forecast'
     provider = Column(String(length=32))
@@ -18,17 +18,17 @@ class StockPerformanceForecast(FinanceBase,Mixin):
     report_date = Column(DateTime)
     pub_date = Column(DateTime)
 
-    preview_type = Column(String(length=32))   #预告类型
-    profit_min = Column(Float)   # 预告净利润（下限）
-    profit_max = Column(Float)   # 预告净利润（上限）
-    profit_last = Column(Float)   # 去年同期净利润（上限）
-    profit_ratio_min = Column(Float)   # 预告净利润变动幅度(下限)单位：%
-    profit_ratio_max = Column(Float)   # 预告净利润变动幅度(上限)单位：%
-    content = Column(String(length=2048))   # 预告内容
+    preview_type = Column(String(length=32))  # 预告类型
+    profit_min = Column(Float)  # 预告净利润（下限）
+    profit_max = Column(Float)  # 预告净利润（上限）
+    profit_last = Column(Float)  # 去年同期净利润（上限）
+    profit_ratio_min = Column(Float)  # 预告净利润变动幅度(下限)单位：%
+    profit_ratio_max = Column(Float)  # 预告净利润变动幅度(上限)单位：%
+    content = Column(String(length=2048))  # 预告内容
+
 
 # 审计意见
 class AuditOpinions(FinanceBase, Mixin):
-
     __tablename__ = 'audit_opinions'
 
     provider = Column(String(length=32))
@@ -38,9 +38,9 @@ class AuditOpinions(FinanceBase, Mixin):
     report_date = Column(DateTime)
     pub_date = Column(DateTime)
 
-    audit_unit = Column(String(length=60))   # 审计单位
-    audit_unit_pay = Column(Float)   # 审计单位薪酬
-    audit_year = Column(Float)   # 审计年限(境内）
+    audit_unit = Column(String(length=60))  # 审计单位
+    audit_unit_pay = Column(Float)  # 审计单位薪酬
+    audit_year = Column(Float)  # 审计年限(境内）
     # non_standard_opinion_description = Column(String(length=3000))  # 非标意见说明
     audit_opinion_category = Column(String(length=32))  # 审计意见类别
     CPA = Column(String(length=32))  # 签字注册会计师
@@ -51,7 +51,8 @@ class BalanceSheet(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return ['total_assets', 'total_liabilities', 'equity', 'cash_and_cash_equivalents', 'accounts_receivable',
+        return ['entity_id', 'code', 'timestamp',
+                'total_assets', 'total_liabilities', 'equity', 'cash_and_cash_equivalents', 'accounts_receivable',
                 'inventories', 'goodwill']
 
     __tablename__ = 'balance_sheet'
@@ -230,7 +231,6 @@ class BalanceSheet(FinanceBase, Mixin):
     # 应收分保合同准备金
     fi_reinsurance_contract_reserve = Column(Float)
 
-
     # 应付手续费及佣金
     fi_fees_and_commissions_payable = Column(Float)
     # 应付分保账款
@@ -330,7 +330,8 @@ class IncomeStatement(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return ['operating_income', 'investment_income', 'total_operating_costs', 'total_profits', 'sales_costs',
+        return ['entity_id', 'code', 'timestamp', 'operating_income', 'investment_income', 'total_operating_costs',
+                'total_profits', 'sales_costs',
                 'managing_costs', 'financing_costs']
 
     __tablename__ = 'income_statement'
@@ -439,7 +440,8 @@ class IncomeStatement(FinanceBase, Mixin):
 class CashFlowStatement(FinanceBase, Mixin):
     @classmethod
     def important_cols(cls):
-        return ['net_op_cash_flows', 'net_investing_cash_flows', 'net_financing_cash_flows', 'cash']
+        return ['entity_id', 'code', 'timestamp', 'net_op_cash_flows', 'net_investing_cash_flows',
+                'net_financing_cash_flows', 'cash']
 
     __tablename__ = 'cash_flow_statement'
 
@@ -651,7 +653,8 @@ class CashFlowStatement(FinanceBase, Mixin):
 class FinanceFactor(FinanceBase, Mixin):
     @classmethod
     def important_cols(cls):
-        return ['basic_eps', 'total_op_income', 'net_profit', 'total_op_income_growth_yoy',
+        return ['entity_id', 'code', 'timestamp', 'basic_eps',
+                'total_op_income', 'net_profit', 'total_op_income_growth_yoy',
                 'inc_net_profit_shareholders_yoy', 'roe',
                 'rota', 'fi_gross_margin_margin', 'net_margin']
 
@@ -803,7 +806,15 @@ class FinanceDerivative(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp',
+                'fi_interest_free_current_liabilities',
+                'fi_interest_free_non_current_liabilities',
+                'fi_interest_bearing_debt', 'fi_net_debt', 'fi_tangible_net_assets',
+                'fi_working_capital', 'fi_net_working_apital', 'fi_retained_earnings',
+                'fi_gross_margin', 'fi_operate_income', 'fi_investment_income',
+                'fi_ebit', 'fi_ebitda', 'fi_extraordinary_item',
+                'fi_deducted_income', 'fi_free_cash_flow_firm',
+                'fi_free_cash_flow_equity', 'fi_depreciation_amortization', ]
 
     __tablename__ = 'finance_derivative'
 
@@ -849,7 +860,14 @@ class FinancePerShare(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp',
+                'eps_diluted_end', 'eps', 'diluted_eps',
+                'bps', 'total_operating_revenue_ps', 'operating_revenue_pee',
+                'operating_profit_ps', 'earnings_bf_interest_taxes_ps',
+                'capital_reserve_ps', 'surplus_reserve_fund_ps',
+                'undistributed_profit_ps', 'retained_earnings_ps',
+                'net_operate_cash_flow_ps', 'net_cash_flow_ps',
+                'free_cash_flow_firm_ps', 'free_cash_flow_equity_ps']
 
     __tablename__ = 'finance_per_share'
 
@@ -886,7 +904,17 @@ class FinanceOperationalCapability(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp',
+                'fixed_assets_turnover_rate',
+                'current_asset_turnover_rate',
+                'total_assets_turnover',
+                'inventory_turnover',
+                'inventory_turnover_days',
+                'receivables_turnover',
+                'receivables_turnover_days',
+                'operating_cycle',
+                'accounts_payable_turnover_rate',
+                'accounts_payable_turnover_days']
 
     __tablename__ = 'finance_operational_capability'
 
@@ -915,7 +943,10 @@ class FinanceProfitAbility(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp', 'gross_income_ratio',
+                'net_profit_ratio', 'roe_diluted', 'roe_avg', 'roe_wa',
+                'roe_ex_diluted', 'roe_ex_wa', 'net_roa',
+                'roa', 'roic']
 
     __tablename__ = 'finance_profit_ability'
 
@@ -941,9 +972,18 @@ class FinanceCapitalStructure(FinanceBase, Mixin):
     """
     财务指标--资本结构
     """
+
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp'
+                 'debt_asset_ratio',
+                'em', 'ca_to_asset',
+                'nc_to_asset', 'tangible_assets_to_asset',
+                'equity_to_total_capital',
+                'interest_liblity_to_total_capital',
+                'cl_to_libility',
+                'cnl_to_libility',
+                'interest_liblity_to_libility']
 
     __tablename__ = 'finace_capital_structure'
 
@@ -967,11 +1007,18 @@ class FinanceCapitalStructure(FinanceBase, Mixin):
 
 class FinanceDuPont(FinanceBase, Mixin):
     """
-    财务指标--杜邦分析
+    财务指标-杜邦分析
     """
+
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp', 'inc_net_profit_shareholders_to_net_profit',
+                'roe_avg', 'em',
+                'total_assets_turnover',
+                'net_profit_to_total_operate_revenue',
+                'net_profit_to_total_profits',
+                'total_profits_to_fi_ebit',
+                'fi_ebit_to_total_op_income']
 
     __tablename__ = 'finance_du_pont'
 
@@ -998,7 +1045,12 @@ class FinanceSinglEquarterDerivative(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp',
+                'fi_investment_income',
+                'fi_gross_margin',
+                'deducted_net_profit',
+                'fi_extraordinary_item',
+                'fi_operate_income']
 
     __tablename__ = 'finance_singl_equarter_derivative'
 
@@ -1022,7 +1074,17 @@ class FinanceDebtpayingAbility(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp',
+                'debt_asset_ratio', 'conservative_quick_ratio',
+                'equity_ratio', 'equity_to_interest_libility',
+                'equity_to_libility', 'cash_to_current_libility',
+                'cfo_to_interest_libility', 'cfo_to_libility',
+                'cfo_to_net_libility', 'cfo_to_cl',
+                'current_ratio', 'quick_ratio',
+                'ebitda_to_int_libility', 'ebitda_to_libility',
+                'op_to_libility', 'op_to_cl',
+                'tangible_asset_to_interest_libility', 'tangible_asset_to_libility',
+                'tangible_asset_to_net_libility']
 
     __tablename__ = 'finance_debtpaying_ability'
 
@@ -1060,7 +1122,13 @@ class FinanceReceivingAbility(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp', 'cfo_to_gr',
+                'sales_cash_intoor',
+                'qcfi_to_cf',
+                'qcfo_to_cfo',
+                'qcfo_to_or',
+                'qcfo_to_operate_income',
+                'qcff_to_cf']
 
     __tablename__ = 'finance_receiving_ability'
 
@@ -1085,7 +1153,12 @@ class FinanceIncomeStatementStructureAnalysis(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp', 'financial_expense_rate',
+                'operating_profit_to_total_profit',
+                'net_profit_to_total_operate_revenue',
+                'admin_expense_rate',
+                'operating_profit_to_operating_revenue',
+                'total_operating_cost_to_total_operating_income']
 
     __tablename__ = 'finance_income_statement_structure_analysis'
 
@@ -1109,7 +1182,13 @@ class FinanceBalanceSheetStructureAnalysis(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp', 'cfo_to_gr',
+                'sales_cash_intoor',
+                'qcfi_to_cf',
+                'qcfo_to_cfo',
+                'qcfo_to_or',
+                'qcfo_to_operate_income',
+                'qcff_to_cf']
 
     __tablename__ = 'finance_balance_sheet_structure_analysis'
 
@@ -1134,7 +1213,14 @@ class FinanceGrowthAbility(FinanceBase, Mixin):
 
     @classmethod
     def important_cols(cls):
-        return []
+        return ['entity_id', 'code', 'timestamp',
+                'total_op_income_growth_yoy', 'op_profit_growth_yoy',
+                'total_profit_growth_yoy', 'net_profit_growth_yoy',
+                'inc_net_profit_shareholders_yoy', 'inc_net_profit_shareholders_deducted_yoy',
+                'basic_eps_you', 'diluted_eps_yoy', 'roe_liluted_yoy',
+                'net_op_cash_flows_yoy', 'net_operate_cash_flow_ps_yoy',
+                'total_assets_relative_of_year', 'equity_relative_of_year',
+                'bps_relativeof_year', ]
 
     __tablename__ = 'finance_growth_ability'
 
@@ -1163,8 +1249,8 @@ class FinanceGrowthAbility(FinanceBase, Mixin):
 register_schema(providers=['eastmoney', 'joinquant', 'emquantapi'], db_name='finance', schema_base=FinanceBase)
 
 __all__ = ['FinanceFactor', 'BalanceSheet', 'IncomeStatement', 'CashFlowStatement',
-           'FinanceDerivative','AuditOpinions',
+           'FinanceDerivative', 'AuditOpinions',
            'FinancePerShare', 'FinanceBalanceSheetStructureAnalysis', 'FinanceIncomeStatementStructureAnalysis',
-           'FinanceSinglEquarterDerivative','FinanceDuPont',
+           'FinanceSinglEquarterDerivative', 'FinanceDuPont',
            'FinanceGrowthAbility', 'FinanceProfitAbility', 'FinanceOperationalCapability', 'FinanceDebtpayingAbility',
-           'FinanceReceivingAbility','FinanceCapitalStructure','StockPerformanceForecast']
+           'FinanceReceivingAbility', 'FinanceCapitalStructure', 'StockPerformanceForecast']

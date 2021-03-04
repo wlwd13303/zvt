@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from EmQuantAPI import *
 from zvt.recorders.joinquant.common import JoinquantTimestampsDataRecorder, call_joinquant_api, get_from_path_fields, \
     get_fc
 
@@ -11,6 +10,10 @@ from zvt.recorders.emquantapi.common import mainCallback, to_em_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, TIME_FORMAT_DAY, now_pd_timestamp, to_pd_timestamp
 
+try:
+    from EmQuantAPI import *
+except:
+    pass
 
 class BaseChinaStockFinanceQtrRecorder(JoinquantTimestampsDataRecorder):
     finance_report_type = None

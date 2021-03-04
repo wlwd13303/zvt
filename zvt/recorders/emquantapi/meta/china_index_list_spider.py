@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
-
 import io
-from EmQuantAPI import *
-import demjson
 import pandas as pd
 import requests
-from jqdatasdk import get_query_count, auth, logout, get_all_securities
-
-from zvt import zvt_env
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import Recorder
-from zvt.recorders.emquantapi.common import mainCallback
 from zvt.utils.time_utils import to_pd_timestamp, now_pd_timestamp, to_time_str
 from zvt.api.quote import china_stock_code_to_id
-from zvt.domain import IndexStock, Index
-
+from zvt.domain import  Index
+try:
+    from EmQuantAPI import *
+    from jqdatasdk import logout
+except:
+    pass
 
 class ChinaIndexListSpider(Recorder):
     data_schema = Index

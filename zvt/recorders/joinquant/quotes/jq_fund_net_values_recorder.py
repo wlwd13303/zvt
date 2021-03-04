@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import auth, get_query_count, query,finance
-
 from zvt import zvt_env
-from zvt.api import AdjustType, TIME_FORMAT_DAY, TIME_FORMAT_ISO8601, get_str_schema
+from zvt.api import TIME_FORMAT_DAY, TIME_FORMAT_ISO8601, get_str_schema
 from zvt.contract import IntervalLevel
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import FixedCycleDataRecorder
 from zvt.recorders.joinquant.common import to_jq_trading_level
 from zvt.utils.pd_utils import pd_is_not_null
-from zvt.utils.time_utils import now_pd_timestamp, to_time_str
+from zvt.utils.time_utils import to_time_str
 from zvt.domain import FundNetValueCommon,Fund
-
+try:
+    from jqdatasdk import auth, get_query_count, query,finance
+except:
+    pass
 
 class JqEtfNetValueRecorder(FixedCycleDataRecorder):
     """

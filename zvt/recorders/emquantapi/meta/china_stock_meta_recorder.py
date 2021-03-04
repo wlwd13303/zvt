@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import auth, get_all_securities, logout, query, finance,normalize_code,get_query_count,get_concept,get_security_info
-from EmQuantAPI import *
 from zvt.recorders.emquantapi.common import mainCallback, to_em_entity_id
 from zvt.contract.api import df_to_db, get_entity_exchange, get_entity_code, get_entities,get_data
 from zvt.contract.recorder import Recorder, TimeSeriesDataRecorder
@@ -12,8 +10,14 @@ from zvt.api.quote import china_stock_code_to_id, portfolio_relate_stock
 from zvt.domain import EtfStock, Stock, Etf, StockDetail,Fund,FundDetail,FundStock
 from zvt.recorders.joinquant.common import to_entity_id, jq_to_report_period
 from zvt.utils.time_utils import to_pd_timestamp
-from zvt.utils.utils import to_float, pct_to_float
-
+from zvt.utils.utils import to_float
+from zvt.utils.time_utils import now_pd_timestamp, to_time_str
+try:
+    from jqdatasdk import auth, get_all_securities, logout, query, finance, normalize_code, get_query_count, \
+        get_concept, get_security_info
+    from EmQuantAPI import *
+except:
+    pass
 
 class BaseEmChinaMetaRecorder(Recorder):
     provider = 'emquantapi'
@@ -53,17 +57,37 @@ class EmChinaStockRecorder(BaseEmChinaMetaRecorder):
     def run(self):
         # 抓取股票列表 001004 全部A股
         # cn_stock_market  = c.sector("001004", "2021-01-17")
-        hk_stock_market = c.sector("401001", "2021-01-17")
+        # hk_stock_market = c.sector("401001", "2021-01-17")
+        # 202001004 全部美股
+        us_stock_market = c.sector("202001004", to_time_str(now_pd_timestamp()))
         import pandas as pd
         # cn_stock_market_df = pd.DataFrame(cn_stock_market.Data, columns=['code'])
-        hk_stock_market_df = pd.DataFrame(hk_stock_market.Data, columns=['code'])
+        # hk_stock_market_df = pd.DataFrame(hk_stock_market.Data, columns=['code'])
+        # .O 纳斯达克     ZYNE.O  nasdaq
+        # .A 美国证券交易所  AAU.A   amex
+        # .N 美国纽约证券交易所    ZYME.N  nyse
+        us_stock_market_df = pd.DataFrame(us_stock_market.Codes, columns=['code'])
+        # us_stock_market_df['code'] = us_stock_market_df.code.apply(lambda x:x.replace(".O",".nasdaq"))
+        # us_stock_market_df['code'] = us_stock_market_df.code.apply(lambda x:x.replace(".N",".nyse"))
+        # us_stock_market_df['code'] = us_stock_market_df.code.apply(lambda x:x.replace(".A",".amex"))
+        # us_stock_market_df['choice_entity'] = us_stock_market_df.choice_code.apply(lambda x:str(x).split('.'))
+        # us_stock_market_df['code'] = us_stock_market_df['choice_entity'].apply(lambda x:x[0])
         # em_data = pd.concat([cn_stock_market_df,hk_stock_market_df],axis=0)
         # try:
         df_res = pd.DataFrame()
-        for code in hk_stock_market_df.code:
+        for code in us_stock_market_df.code:
             if '.SH' in code or '.SZ' in code:
                 data_css = c.css(code, "NAME,CODE,LISTDATE,LISTMKT,DELISTDATE", "ispandas=1")
             elif '.HK' in code:
+                # 港、美股和A股的字段不同
+                try:
+                    self.logger.info(f"开始获取{code}的数据!")
+                    data_css = c.css(code, "NAME,CODE,IPOLISTDATE,DELISTDATE", "ispandas=1")
+                except:
+                    self.logger.info(f"获取{code}的数据失败,跳过!")
+                    continue
+            # elif any(name in code for name in ['.nasdaq','.nyse','.amex']):
+            elif any(name in code for name in ['.O','.A','.N']):
                 # 港、美股和A股的字段不同
                 try:
                     self.logger.info(f"开始获取{code}的数据!")

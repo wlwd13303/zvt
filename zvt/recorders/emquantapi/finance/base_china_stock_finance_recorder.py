@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from EmQuantAPI import *
 from zvt.recorders.joinquant.common import JoinquantTimestampsDataRecorder, call_joinquant_api, get_from_path_fields, \
     get_fc
-
-from zvt.api import get_recent_report_period, to_report_period_type
+from zvt.api import to_report_period_type
 from zvt.contract.api import df_to_db
-from zvt.contract.recorder import TimeSeriesDataRecorder
-from zvt.domain import StockDetail,Stock
+from zvt.domain import StockDetail
 from zvt.recorders.emquantapi.common import mainCallback, to_em_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, TIME_FORMAT_DAY, now_pd_timestamp, to_pd_timestamp
-
+try:
+    from EmQuantAPI import *
+except:
+    pass
 
 class EmBaseChinaStockFinanceRecorder(JoinquantTimestampsDataRecorder):
     finance_report_type = None

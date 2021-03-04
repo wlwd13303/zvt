@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 import argparse
-
 import pandas as pd
-from jqdatasdk import auth, logout, get_bars
-
-from EmQuantAPI import *
-from zvt import init_log, zvt_env
+from zvt import init_log
 from zvt.api import get_kdata, AdjustType
-from zvt.api.quote import generate_kdata_id, get_kdata_schema
+from zvt.api.quote import generate_kdata_id,get_kdata_schema
 from zvt.contract import IntervalLevel
-from zvt.contract.api import df_to_db, get_data
+from zvt.contract.api import df_to_db
 from zvt.contract.recorder import FixedCycleDataRecorder
-from zvt.recorders.joinquant.common import to_jq_trading_level, to_jq_entity_id
-from zvt.domain import Stock, StockKdataCommon, StockStatus, Stock1dHfqKdata, StockNames
+from zvt.recorders.joinquant.common import to_jq_trading_level
+from zvt.domain import Stock, StockKdataCommon, Stock1dHfqKdata
 from zvt.utils.pd_utils import pd_is_not_null
-from zvt.utils.time_utils import to_time_str, now_pd_timestamp, TIME_FORMAT_DAY, TIME_FORMAT_ISO8601
-
+from zvt.utils.time_utils import to_time_str,  TIME_FORMAT_DAY, TIME_FORMAT_ISO8601
+try:
+    from EmQuantAPI import *
+except:
+    pass
 
 class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
     entity_provider = 'emquantapi'
@@ -28,7 +27,7 @@ class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
     data_schema = StockKdataCommon
 
     def __init__(self,
-                 exchanges=['hk'],
+                 exchanges=['hk','sh','sz','o','a','n'],
                  entity_ids=None,
                  codes=None,
                  batch_size=10,
@@ -81,6 +80,30 @@ class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
                     kdata.low = round(kdata.low * qfq_factor, 2)
                 self.session.add_all(kdatas)
                 self.session.commit()
+
+    # def record(self, entity, start, end, size, timestamps):
+    #     if start >= pd.to_datetime("20210101"):
+    #         return None
+    #     if start <= pd.to_datetime("20000101"):
+    #         return None
+    #     if self.adjust_type == AdjustType.hfq:
+    #         # 1 不复权
+    #         # 2 后复权
+    #         # 3 前复权
+    #         adjustflag = 2
+    #     elif self.adjust_type == AdjustType.qfq:
+    #         adjustflag = 3
+    #     elif self.adjust_type == AdjustType.bfq:
+    #         adjustflag = 1
+    #     last_timestamp = pd.to_datetime('20050101')
+    #     data_schema_old = get_kdata_schema(entity_type='stock', level=self.level, adjust_type=self.adjust_type)
+    #     df = get_kdata(entity_id=entity.id, level=self.level.value,adjust_type=self.adjust_type,
+    #                        filters=[data_schema_old.timestamp >= last_timestamp])
+    #
+    #     if pd_is_not_null(df):
+    #         df_to_db(df=df, data_schema=self.data_schema, provider=self.provider, force_update=self.force_update)
+    #
+    #     return None
 
     def record(self, entity, start, end, size, timestamps):
         if self.adjust_type == AdjustType.hfq:

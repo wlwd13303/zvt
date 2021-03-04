@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from EmQuantAPI import *
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import TimeSeriesDataRecorder
-from zvt.utils.time_utils import now_pd_timestamp, now_time_str, to_time_str
-from zvt.contract.api import get_data
-from zvt.domain import Stock, StockValuation, Etf, StockValuationNew, StockTradeDay
-# from zvt.domain import Stock, StockValuation, Etf, StockTradeDay
-
+from zvt.utils.time_utils import now_pd_timestamp, to_time_str
+from zvt.domain import Stock, StockValuation, Etf
+try:
+    from EmQuantAPI import *
+except:
+    pass
 
 class JqChinaStockValuationRecorder(TimeSeriesDataRecorder):
     entity_provider = 'joinquant'

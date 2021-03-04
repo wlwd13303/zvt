@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from EmQuantAPI import *
+
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import TimeSeriesDataRecorder, FixedCycleDataRecorder
 from zvt.utils.time_utils import now_pd_timestamp, now_time_str, to_time_str
 from zvt.domain import IndexValuation,Index
+try:
+    from EmQuantAPI import *
+except:
+    pass
 
 class EmChinaStockValuationRecorder(TimeSeriesDataRecorder):
     entity_provider = 'emquantapi'

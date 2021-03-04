@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from jqdatasdk import auth, get_query_count, finance, query, get_locked_shares
+
 import pandas as pd
 from zvt.recorders.joinquant.common import to_jq_entity_id
 from datetime import timedelta
@@ -9,7 +9,10 @@ from zvt.contract.api import df_to_db
 from zvt.contract.recorder import FixedCycleDataRecorder
 from zvt.domain import LockedShares
 from zvt.domain import Stock
-
+try:
+    from jqdatasdk import auth, get_query_count, get_locked_shares
+except:
+    pass
 
 class LockedSharesRecorder(FixedCycleDataRecorder):
     """

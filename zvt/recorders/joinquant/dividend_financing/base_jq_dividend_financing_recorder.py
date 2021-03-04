@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import auth, query, indicator, get_fundamentals, logout, finance
-
 from zvt import zvt_env
 from zvt.api.quote import to_jq_report_period, get_recent_report_period
 from zvt.contract.api import get_data, df_to_db
@@ -13,7 +11,10 @@ from zvt.utils.pd_utils import index_df
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, to_pd_timestamp, TIME_FORMAT_DAY
 from zvt.domain import StockDetail
-
+try:
+    from jqdatasdk import auth, query, indicator, get_fundamentals, logout, finance
+except:
+    pass
 
 class BaseJqDividendFinancingRecorder(JoinquantTimestampsDataRecorder):
     finance_report_type = None
@@ -99,7 +100,6 @@ class BaseJqDividendFinancingRecorder(JoinquantTimestampsDataRecorder):
         # different with the default timestamps handling
         param = self.generate_request_param(entity, start, end, size, timestamps)
 
-        from jqdatasdk import finance
 
         # 上市公司分红送股（除权除息）数据
         df = finance.run_query(query(finance.STK_XR_XD).filter(finance.STK_XR_XD.code == to_jq_entity_id(entity),

@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import auth, query, indicator, get_fundamentals, logout, finance
-
 from zvt import zvt_env
 from zvt.api.quote import to_jq_report_period, to_report_period_type
-
 from zvt.contract.api import get_data, df_to_db
 from zvt.domain import FinanceFactor
-
 from zvt.recorders.joinquant.common import company_type_flag, get_fc, \
     call_joinquant_api, get_from_path_fields,JoinquantTimestampsDataRecorder
 from zvt.recorders.joinquant.common import to_jq_entity_id
@@ -15,6 +11,10 @@ from zvt.utils.pd_utils import index_df
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, to_pd_timestamp, TIME_FORMAT_DAY
 from zvt.domain import StockDetail
+try:
+    from jqdatasdk import auth, query, indicator, get_fundamentals, logout, finance
+except:
+    pass
 
 class BaseJqStockFinanceRecorder(JoinquantTimestampsDataRecorder):
     finance_report_type = None

@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-
 import io
-
 import demjson
 import pandas as pd
 import requests
-from jqdatasdk import get_query_count, auth, logout, get_all_securities, get_index_stocks
-
 from zvt import zvt_env
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import Recorder
 from zvt.utils.time_utils import to_pd_timestamp, now_pd_timestamp
 from zvt.api.quote import china_stock_code_to_id
 from zvt.domain import IndexStock, Index
-
+try:
+    from jqdatasdk import get_query_count, auth, logout, get_all_securities, get_index_stocks
+except:
+    pass
 
 class ChinaIndexListSpider(Recorder):
     data_schema = IndexStock

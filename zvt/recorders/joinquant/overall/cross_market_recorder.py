@@ -1,10 +1,13 @@
-from jqdatasdk import auth, query, finance
-
 from zvt.contract.recorder import TimeSeriesDataRecorder
 from zvt.utils.time_utils import to_time_str
 from zvt.utils.utils import multiple_number
 from zvt import zvt_env
 from zvt.domain import Index, CrossMarketSummary
+
+try:
+    from jqdatasdk import auth, query, finance
+except:
+    pass
 
 
 class CrossMarketSummaryRecorder(TimeSeriesDataRecorder):

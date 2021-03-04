@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-from jqdatasdk import auth, get_query_count, finance, query, normalize_code
 import pandas as pd
 from zvt.recorders.joinquant.common import to_jq_entity_id
 
 from zvt import zvt_env
-from zvt.api import get_str_schema, to_time_str, pd_is_not_null, generate_kdata_id, TIME_FORMAT_ISO8601, TIME_FORMAT_DAY
+from zvt.api import get_str_schema, to_time_str, pd_is_not_null, TIME_FORMAT_DAY
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import FixedCycleDataRecorder
-from zvt.utils.utils import to_float
 from zvt.domain import HolderTrading
 from zvt.domain import Stock
-
+try:
+    from jqdatasdk import auth, get_query_count, finance, query, normalize_code
+except:
+    pass
 
 class HolderTradingRecorder(FixedCycleDataRecorder):
     """

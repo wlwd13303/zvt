@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from EmQuantAPI import *
-from jqdatasdk import auth, get_all_securities, logout, query, finance, normalize_code, get_query_count, get_concept, \
-    get_index_stocks
 
 from zvt.contract.api import df_to_db, get_entity_exchange, get_entity_code, get_entities
 from zvt.contract.recorder import Recorder, TimeSeriesDataRecorder
@@ -10,11 +7,15 @@ from zvt.recorders.tonglian.common import to_jq_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt import zvt_env
 from zvt.api.quote import china_stock_code_to_id, portfolio_relate_stock
-from zvt.domain import EtfStock, Stock, Etf, StockDetail, Fund, FundDetail, FundStock, Index, IndexStockNew, \
-    StockDetailNew
+from zvt.domain import EtfStock, Stock, Etf, StockDetail, Fund, FundDetail, FundStock, Index, IndexStockNew
 from zvt.recorders.joinquant.common import to_entity_id, jq_to_report_period
 from zvt.utils.time_utils import to_pd_timestamp, to_time_str, now_pd_timestamp
-from zvt.utils.utils import to_float, pct_to_float
+try:
+    from EmQuantAPI import *
+    from jqdatasdk import auth, get_all_securities, logout, query, finance, normalize_code, get_query_count, get_concept, \
+        get_index_stocks
+except:
+    pass
 
 
 class BaseJqChinaMetaRecorder(Recorder):
@@ -375,6 +376,7 @@ class JqChinaIndexListSpiderNewRecorder(TimeSeriesDataRecorder):
             df['stock_exchange'] = df['code'].apply(lambda x: str(x).split('.')[1])
             df['stock_exchange'] = df['stock_exchange'].replace('XSHG', 'sh').replace('XSHE', 'sz')
             df['stock_id'] = df['stock_code'].apply(lambda x: china_stock_code_to_id(x))
+            df['stock_name'] = df.stock_id.apply(lambda x: StockDetail.query_data(entity_id = x).name[0])
             df_old = df[df.stock_id.isin(data_schema_df.stock_id)].copy()
             df_new = df[~df.stock_id.isin(data_schema_df.stock_id)].copy()
             out_data = data_schema_df[~data_schema_df.stock_id.isin(df.stock_id)].copy()

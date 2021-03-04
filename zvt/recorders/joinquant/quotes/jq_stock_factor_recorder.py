@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
-
 import pandas as pd
-from jqdatasdk import auth, logout, get_factor_values
-
 from zvt import init_log, zvt_env
 from zvt.api.quote import get_stock_factor_schema
 from zvt.contract import IntervalLevel
@@ -14,6 +11,10 @@ from zvt.domain import Stock,StockFactorCommon
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, now_pd_timestamp, TIME_FORMAT_DAY, TIME_FORMAT_ISO8601
 
+try:
+    from jqdatasdk import auth, logout, get_factor_values
+except:
+    pass
 
 class JqChinaStockFactorRecorder(FixedCycleDataRecorder):
     entity_provider = 'joinquant'

@@ -1,4 +1,3 @@
-[![github](https://img.shields.io/github/stars/zvtvz/zvt.svg)](https://github.com/zvtvz/zvt)
 [![image](https://img.shields.io/pypi/v/zvt.svg)](https://pypi.org/project/zvt/)
 [![image](https://img.shields.io/pypi/l/zvt.svg)](https://pypi.org/project/zvt/)
 [![image](https://img.shields.io/pypi/pyversions/zvt.svg)](https://pypi.org/project/zvt/)
@@ -6,40 +5,29 @@
 [![codecov.io](https://codecov.io/github/zvtvz/zvt/coverage.svg?branch=master)](https://codecov.io/github/zvtvz/zvt)
 [![HitCount](http://hits.dwyl.io/zvtvz/zvt.svg)](http://hits.dwyl.io/zvtvz/zvt)
 
-ZVT是在[fooltrader](https://github.com/foolcage/fooltrader)的基础上重新思考后编写的量化项目，其包含可扩展的数据recorder，api，因子计算，选股，回测，交易,以及统一的可视化，定位为**中低频** **多级别** **多因子** **多标的** 全市场分析和交易框架。
-
-相比其他的量化系统，其不依赖任何中间件，**非常轻，可测试，可推断，可扩展**。
+ZVTData是在zvt的基础上编写的量化数据服务，其包含沪深股票、港股和美股的历史行情和财务数据。
 
 编写该系统的初心:
 * 构造一个中立标准的数据schema
 * 能够容易地把各provider的数据适配到系统
 * 相同的算法，只写一次，可以应用到任何市场
-* 适用于低耗能的人脑+个人电脑
 
-## ✨特性
-- **丰富全面开箱即用可扩展可持续增量更新的数据**
-    - A股数据:行情,财务报表,大股东行为,高管交易,分红融资详情,个股板块资金流向,融资融券,龙虎榜等数据
-    - 市场整体pe,pb,资金流，融资融券，外资动向等数据
-    - 数字货币数据
+## ✨产品与服务综览
+- **股票，ETF，汇率，债券数据服务：数据库格式（MySQL）**
+    - 海外股票数据：
+        - 港股数据：包括港股财务数据（实现中）、港股GICS行业分类数据(实现中）
+        - 美股数据：包括美股财务数据（实现中）、美股GICS行业分类数据(实现中）
+        - 港股、美股股票的历史数据及每日数据服务。历史数据可提供日线数据、周线数据及月线数据。 包括了美国证交所（AMEX）、美国纳斯达克市场（Nasdaq，同时包含NasdaqNM及NasdaqSC）、纽约证券交易所（NYSE）、香港联交所（主板、创业板）等市场的股票历史数据。
+    - 沪深市场:
+        - 提供沪深市场的权息数据及财务数据：包括公司历年募资、分红派息配股送股等权息记录，以及股本结构和股权状况。上市公司和债券发行人披露的财务报表、财务附注、重要财务指标等。
+        - 沪深市场的历史数据及每日数据服务。历史数据可提供日线数据、周线数据及月线数据。
+        - 沪深市场的指数数据、债券数据以及宏观经济数据（实现中）
 - 数据的标准化,多数据源(provider)交叉验证,补全
 - **简洁可扩展的数据框架**
 - **统一简洁的API,支持sql查询,支持pandas**
-- 可扩展的factor,对单标的和多标的的运算抽象了一种统一的计算方式
-- **支持多标的,多factor,多级别的回测方式**
-- 支持交易信号和策略使用到的factor的实时可视化
-- 支持多种实盘交易(实现中)
 
 ## 💯关于该文档
 
-该文档由[项目docs](https://github.com/zvtvz/zvt/tree/master/docs)自动生成，主要内容为项目的**基本用法**和**整体设计**,你应该仔细地阅读所有的章节。
-
-现实中的使用例子会在公众号和知乎专栏中长期更新，其假设你已经读过此文档。
+该文档由[项目docs]
 
 ------
-微信公众号:  
-
-<img src="./imgs/gongzhonghao.jpg" width="25%" alt="Wechat">
-
-知乎专栏:
-
-https://zhuanlan.zhihu.com/automoney

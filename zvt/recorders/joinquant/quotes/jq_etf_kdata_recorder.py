@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import get_price, normalize_code, auth,get_query_count
+
 
 from zvt import zvt_env
 from zvt.api import AdjustType, get_kdata_schema, get_kdata, TIME_FORMAT_DAY, TIME_FORMAT_ISO8601
 from zvt.contract import IntervalLevel
 from zvt.contract.api import df_to_db
-from zvt.contract.recorder import TimeSeriesDataRecorder,FixedCycleDataRecorder
+from zvt.contract.recorder import FixedCycleDataRecorder
 from zvt.recorders.joinquant.common import to_jq_trading_level
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import now_pd_timestamp, to_time_str
-from zvt.api.quote import get_etf_stocks
-from zvt.domain import StockValuation, Etf, EtfKdataCommon
-
+from zvt.domain import Etf, EtfKdataCommon
+try:
+    from jqdatasdk import get_price, normalize_code, auth, get_query_count
+except:
+    pass
 
 class JqChinaEtfValuationRecorder(FixedCycleDataRecorder):
     entity_provider = 'joinquant'

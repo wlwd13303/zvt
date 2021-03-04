@@ -6,8 +6,10 @@ from zvt.contract import Mixin
 
 class KdataCommon(Mixin):
     provider = Column(String(length=32))
-    code = Column(String(length=32))
-    name = Column(String(length=32))
+
+    code = Column(String(length=64))
+    name = Column(String(length=128))
+
     # Enum constraint is not extendable
     # level = Column(Enum(IntervalLevel, values_callable=enum_value))
     level = Column(String(length=32))
@@ -25,6 +27,29 @@ class KdataCommon(Mixin):
     volume = Column(Float)
     # 成交金额
     turnover = Column(Float)
+
+
+# class KdataCommon(Mixin):
+#     provider = Column(String(length=32))
+#     code = Column(String(length=32))
+#     name = Column(String(length=32))
+#     # Enum constraint is not extendable
+#     # level = Column(Enum(IntervalLevel, values_callable=enum_value))
+#     level = Column(String(length=32))
+#
+#     # 如果是股票，代表前复权数据
+#     # 开盘价
+#     open = Column(Float)
+#     # 收盘价
+#     close = Column(Float)
+#     # 最高价
+#     high = Column(Float)
+#     # 最低价
+#     low = Column(Float)
+#     # 成交量
+#     volume = Column(Float)
+#     # 成交金额
+#     turnover = Column(Float)
 
 
 class TickCommon(Mixin):
@@ -84,6 +109,7 @@ class StockKdataCommon(KdataCommon):
     change_pct = Column(Float)
     # 换手率
     turnover_rate = Column(Float)
+
 
 class BondKdata(Mixin):
     """

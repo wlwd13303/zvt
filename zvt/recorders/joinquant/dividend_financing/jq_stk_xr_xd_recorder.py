@@ -8,8 +8,12 @@ from zvt.contract.recorder import TimeSeriesDataRecorder
 from zvt.domain import DividendDetail,StockDetail
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import now_pd_timestamp, to_time_str
-from jqdatasdk import auth, query, indicator, get_fundamentals, logout, finance
 from zvt.recorders.joinquant.common import to_jq_entity_id
+try:
+    from jqdatasdk import auth, query, indicator, get_fundamentals, logout, finance
+except:
+    pass
+
 
 class JqDividendDetailRecorder(TimeSeriesDataRecorder):
     entity_provider = 'joinquant'

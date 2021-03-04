@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from EmQuantAPI import *
-from zvt.recorders.emquantapi.common import mainCallback, to_em_entity_id
 import pandas as pd
-from jqdatasdk import finance, query
-
-from zvt.contract.api import df_to_db, get_data
+from zvt.contract.api import df_to_db
 from zvt.contract.recorder import Recorder, TimeSeriesDataRecorder
+from zvt.recorders.emquantapi.common import mainCallback
 from zvt.recorders.joinquant.common import to_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import now_pd_timestamp, to_time_str, TIME_FORMAT_DAY
 from zvt.domain import BlockStock, Block, Block1dKdata, BlockMoneyFlow
-
+try:
+    from jqdatasdk import finance, query
+    from EmQuantAPI import *
+except:
+    pass
 
 class EmChinaBlockRecorder(Recorder):
     """
