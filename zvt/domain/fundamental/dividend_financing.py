@@ -85,8 +85,6 @@ class FundDividendDetail(DividendFinancingBase, Mixin):
     dividend_plan_progress = Column(String(length=128))
 
 
-
-
 class DividendDetail(DividendFinancingBase, Mixin):
     """
     分红明细

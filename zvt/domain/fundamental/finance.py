@@ -970,7 +970,7 @@ class FinanceProfitAbility(FinanceBase, Mixin):
 
 class FinanceCapitalStructure(FinanceBase, Mixin):
     """
-    财务指标--资本结构
+    财务指标-资本结构
     """
 
     @classmethod

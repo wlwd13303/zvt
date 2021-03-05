@@ -1,53 +1,47 @@
-## 支持的数据
-## TODO:数据上传
-```
-from zvt.domain import *
-```
-<table>
-  <tr>
-    <th>db</th>
-    <th>schema</th>
-    <th>更新方法</th>
-    <th>下载地址</th>
-  </tr>
+## 目前支持的数据
 
-  <td rowspan="9">stock_meta</td>
-  
-  <tr>
-    <td>Stock</td>
-    <td>Stock.record_data(provider='joinquant')<br>Stock.record_data(provider='eastmoney')<br></td>
-    <td rowspan="9">wait...</td>
-  </tr>
-  <tr>
-    <td>Block</td>
-    <td>Block.record_data(provider='sina')<br>Block.record_data(provider='eastmoney')</td>
-  </tr>
-
-  <tr>
-    <td>BlockStock</td>
-    <td>BlockStock.record_data(provider='sina')<br>BlockStock.record_data(provider='eastmoney')</td>
-  </tr>
-  <tr>
-    <td>Etf</td>
-    <td>Etf.record_data(provider='joinquant')</td>
-  </tr>
-  <tr>
-    <td>EtfStock</td>
-    <td>EtfStock.record_data(provider='joinquant')</td>
-  </tr>
-  <tr>
-    <td>Index</td>
-    <td>Index.record_data</td>
-  </tr>
-
-  <tr>
-    <td>IndexStock</td>
-    <td>IndexStock.record_data</td>
-  </tr>
-
-  <tr>
-    <td>StockDetail</td>
-    <td>StockDetail.record_data(provider='eastmoney')</td>
-  </tr>
-
-</table>
+### 股票数据
+|名称|数据类|解释| 数据更新（北京时间） |
+|-----------|--------|-----|-----|
+|个股资料|Stock|个股和板块为多对多的关系，支持沪深市场，港股，美股|每日15:30起|
+|个股详细资料|StockDetail|公司的基本资料，支持沪深市场，港股（待支持），美股（待支持）|每日15:30起|
+|板块资料|Block|板块有行业,概念,区域三个分类的维度,不同的provider分类会有所不同,个股和板块为多对多的关系，支持沪深市场，港股（待支持），美股（待支持）|每日15:30起|
+|指数资料|Index|指数的上市时间、基准点位等，支持沪深市场|每日17:30起|
+|个股行情|Stock{level}Kdata|支持日线，周线，月线级别，支持沪深市场，港股，美股|每日15:30起|
+|指数行情|Index{level}Kdata|支持日线，周线，月线级别，支持沪深市场，港股（待支持），美股（待支持）|每日17:30起|
+|ETF行情|Etf{level}Kdata|支持日线，周线，月线级别，支持沪深市场，港股（待支持），美股（待支持）|每日16:30起|
+|板块行情|Block1dKdata|支持日线级别，支持行业类型，支持沪深市场，港股（待支持），美股（待支持）|16:30起|
+|中国十年期债券|Bond1dKdata|支持日线级别|16:30起|
+|场外基金净值|FundNetValue|支持单位净值，累计净值等，支持沪深市场|每日16:30起|
+|个股估值数据|StockValuation|个股的估值数据，如总股本、流通股本、PE等，支持沪深市场|每日16:30起|
+|指数估值数据|IndexValuation| 指数的估值数据，如总市值、流通市值、PE等，支持沪深市场       |每日17:30起|
+|分红明细| DividendDetail                          |提供了上市公司的分红明细，支持沪深市场|每日17:30起|
+|配股明细|RightsIssueDetail|提供了上市公司的配股明细，支持沪深市场|每日17:30起|
+|合并资产负债表|BalanceSheet|提供了上市公司的合并资产负债表，支持沪深市场|每日17:30起|
+|合并利润表|IncomeStatement|提供了上市公司的合并利润表，支持沪深市场|每日17:30起|
+|现金流量表|CashFlowStatement|提供了上市公司的现金流量表，支持沪深市场|每日17:30起|
+|单季合并利润表|IncomeStatementQtr|提供了上市公司的单季合并利润表，支持沪深市场|每日17:30起|
+|单季现金流量表|CashFlowStatementQtr|提供了上市公司的现金流量表，支持沪深市场|每日17:30起|
+|财务衍生数据|FinanceDerivative|提供了上市公司的财务衍生数据，支持沪深市场|每日17:30起|
+|审计意见|AuditOpinions|提供了上市公司的审计意见数据，支持沪深市场|每日17:30起|
+|财务指标-每股| FinancePerShare                         | 提供了上市公司的财务指标-每股数据，支持沪深市场              | 每日17:30起          |
+|财务指标-杜邦分析| FinanceDuPont                           | 提供了上市公司的财务指标-杜邦分析数据，支持沪深市场          | 每日17:30起          |
+|财务指标-成长能力| FinanceGrowthAbility                    | 提供了上市公司的财务指标-成长能力数据，支持沪深市场          | 每日17:30起          |
+|财务指标-盈利能力| FinanceProfitAbility                    | 提供了上市公司的财务指标-盈利能力数据，支持沪深市场          | 每日17:30起          |
+|财务指标-运营能力| FinanceOperationalCapability            | 提供了上市公司的财务指标-运营能力数据，支持沪深市场          | 每日17:30起          |
+|财务指标-偿债能力| FinanceDebtpayingAbility                | 提供了上市公司的财务指标-偿债能力数据，支持沪深市场          | 每日17:30起          |
+|财务指标-收现能力| FinanceReceivingAbility                 | 提供了上市公司的财务指标-收现能力数据，支持沪深市场          | 每日17:30起          |
+|财务指标--资本结构| FinanceCapitalStructure                 | 提供了上市公司的财务指标-资本结构数据，支持沪深市场          | 每日17:30起          |
+|业绩预告| StockPerformanceForecast                | 提供了上市公司的业绩预告数据，支持沪深市场                   | 每日17:30起          |
+| 财务指标-资产负债表结构分析（待实现） |FinanceBalanceSheetStructureAnalysis|提供了上市公司的财务指标-资产负债表结构分析数据，支持沪深市场|每日17:30起|
+|财务指标-利润表结构分析（待实现）|FinanceIncomeStatementStructureAnalysis|提供了上市公司的财务指标-利润表结构分析数据，支持沪深市场|每日17:30起|
+|财务指标-单季度财务衍生数据（待实现）| FinanceSinglEquarterDerivative          |提供了上市公司的财务指标-单季度财务衍生数据，支持沪深市场|每日17:30起|
+|基础科目及衍生类因子|StockBasicsFactor|支持沪深市场|每日19:30起|
+|情绪类因子|StockEmotionFactor|支持沪深市场|每日19:30起|
+|成长类因子|StockGrowthFactor|支持沪深市场|每日19:30起|
+|动量类因子|StockMomentumFactor|支持沪深市场|每日19:30起|
+|每股指标因子|StockPershareFactor|支持沪深市场|每日19:30起|
+|质量类因子|StockQualityFactor|支持沪深市场|每日19:30起|
+|风险类因子|StockRiskFactor|支持沪深市场|每日19:30起|
+|风格因子|StockStyleFactor|支持沪深市场|每日19:30起|
+|技术指标因子|StockTechnicalFactor|支持沪深市场|每日19:30起|

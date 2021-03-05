@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from jqdatasdk import auth, get_trade_days
-
 from zvt.contract.api import df_to_db
 from zvt.contract.recorder import TimeSeriesDataRecorder
 from zvt.utils.time_utils import to_time_str
 from zvt import zvt_env
 from zvt.domain import StockTradeDay, Stock
-
+try:
+    from jqdatasdk import auth, get_trade_days
+except:
+    pass
 
 class StockTradeDayRecorder(TimeSeriesDataRecorder):
     entity_provider = 'tonglian'
