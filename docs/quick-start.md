@@ -19,11 +19,11 @@ pip install --upgrade zvt  -i http://pypi.douban.com/simple --trusted-host pypi.
 
 ###  1.2 进入ipython,初始化配置
 ```
-#初次运行这一句会报错，并创建/home/xxx/zvt-home目录
+#初次运行这一行代码会创建/home/xxx/zvt-home目录,并且报错
 In [1]: from zvt.domain import *
-#退出并进入zvt-home路径
+#退出并进入zvt-home目录
 In [2]: exit
-zvt-home路径下会有config.json，打开并并编辑以下配置
+zvt-home路径下会有config.json，打开并编辑以下配置
 {
   "data_path": "/home/xxx/zvt-home/data",
   "db_engine": "xxx",
