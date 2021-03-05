@@ -17,42 +17,41 @@ pip install --upgrade zvt  -i http://pypi.douban.com/simple --trusted-host pypi.
 > 请根据需要决定是否使用豆瓣镜像源
 
 
-###  1.2 进入ipython,体验一把
+###  1.2 进入ipython,初始化配置
 ```
-In [1]: import os
-
-#这一句会进入测试环境，使用自带的测试数据
-In [2]: os.environ["TESTING_ZVT"] = "1"
-
-In [3]: from zvt import *
-{'data_path': '/Users/xuanqi/zvt-test-home/data',
- 'domain_module': 'zvt.domain',
- 'email_password': '',
- 'email_username': '',
- 'http_proxy': '127.0.0.1:1087',
- 'https_proxy': '127.0.0.1:1087',
- 'jq_password': '',
- 'jq_username': '',
- 'log_path': '/Users/xuanqi/zvt-test-home/logs',
- 'smtp_host': 'smtpdm.aliyun.com',
- 'smtp_port': '80',
- 'ui_path': '/Users/xuanqi/zvt-test-home/ui',
- 'wechat_app_id': '',
- 'wechat_app_secrect': '',
- 'zvt_home': '/Users/xuanqi/zvt-test-home'}
+#初次运行这一句会报错，并创建/home/xxx/zvt-home目录
+In [1]: from zvt.domain import *
+#退出并进入zvt-home路径
+In [2]: exit
+zvt-home路径下会有config.json，打开并并编辑以下配置
+{
+  "data_path": "/home/xxx/zvt-home/data",
+  "db_engine": "xxx",
+  "mysql_username": "xxx",
+  "mysql_password": "xxx",
+  "mysql_server_address": "xxx",
+  "mysql_server_port": xxx,
+  "db_name": "xxx"
+}
+```
+###  1.2 进入ipython,开始使用接口获取数据
+```
 In [5]: from zvt.api import *
-
-In [6]: df = get_kdata(entity_id='stock_sz_000338',provider='joinquant')
-
-n [8]: df.tail()
-Out[8]:
-                                    id        entity_id  timestamp   provider    code  name level   open  close   high    low       volume      turnover change_pct turnover_rate
-timestamp
-2019-10-29  stock_sz_000338_2019-10-29  stock_sz_000338 2019-10-29  joinquant  000338  潍柴动力    1d  12.00  11.78  12.02  11.76   28533132.0  3.381845e+08       None          None
-2019-10-30  stock_sz_000338_2019-10-30  stock_sz_000338 2019-10-30  joinquant  000338  潍柴动力    1d  11.74  12.05  12.08  11.61   42652561.0  5.066013e+08       None          None
-2019-10-31  stock_sz_000338_2019-10-31  stock_sz_000338 2019-10-31  joinquant  000338  潍柴动力    1d  12.05  11.56  12.08  11.50   77329380.0  9.010439e+08       None          None
-2019-11-01  stock_sz_000338_2019-11-01  stock_sz_000338 2019-11-01  joinquant  000338  潍柴动力    1d  11.55  12.69  12.70  11.52  160732771.0  1.974125e+09       None          None
-2019-11-04  stock_sz_000338_2019-11-04  stock_sz_000338 2019-11-04  joinquant  000338  潍柴动力    1d  12.77  13.00  13.11  12.77  126673139.0  1.643788e+09       None          None
+In [6]: df = get_kdata(entity_id='stock_sz_000338',start_timestamp='2019-01-01',limit=10)
+In [7]: df
+Out[7]: 
+                                    id        entity_id  timestamp   provider    code  name level  open  close  high   low      volume     turnover change_pct turnover_rate
+timestamp                                                                                                                                                                   
+2019-01-02  stock_sz_000338_2019-01-02  stock_sz_000338 2019-01-02  joinquant  000338  潍柴动力    1d  7.33   7.17  7.34  7.16  22390100.0  164558000.0       None          None
+2019-01-03  stock_sz_000338_2019-01-03  stock_sz_000338 2019-01-03  joinquant  000338  潍柴动力    1d  7.19   7.10  7.22  7.04  28278900.0  205391000.0       None          None
+2019-01-04  stock_sz_000338_2019-01-04  stock_sz_000338 2019-01-04  joinquant  000338  潍柴动力    1d  7.04   7.21  7.22  7.02  21146800.0  154030000.0       None          None
+2019-01-07  stock_sz_000338_2019-01-07  stock_sz_000338 2019-01-07  joinquant  000338  潍柴动力    1d  7.26   7.26  7.29  7.20  32106900.0  236955000.0       None          None
+2019-01-08  stock_sz_000338_2019-01-08  stock_sz_000338 2019-01-08  joinquant  000338  潍柴动力    1d  7.27   7.26  7.27  7.20  16670800.0  122996000.0       None          None
+2019-01-09  stock_sz_000338_2019-01-09  stock_sz_000338 2019-01-09  joinquant  000338  潍柴动力    1d  7.31   7.35  7.49  7.29  46791300.0  354013000.0       None          None
+2019-01-10  stock_sz_000338_2019-01-10  stock_sz_000338 2019-01-10  joinquant  000338  潍柴动力    1d  7.38   7.41  7.47  7.33  26394400.0  199378000.0       None          None
+2019-01-11  stock_sz_000338_2019-01-11  stock_sz_000338 2019-01-11  joinquant  000338  潍柴动力    1d  7.41   7.49  7.51  7.37  30223200.0  229583000.0       None          None
+2019-01-14  stock_sz_000338_2019-01-14  stock_sz_000338 2019-01-14  joinquant  000338  潍柴动力    1d  7.51   7.59  7.72  7.50  51239800.0  397665000.0       None          None
+2019-01-15  stock_sz_000338_2019-01-15  stock_sz_000338 2019-01-15  joinquant  000338  潍柴动力    1d  7.58   7.70  7.74  7.54  36695200.0  287000000.0       None          None
 ```
 
 ### 1.3 财务数据
@@ -74,30 +73,7 @@ Out[12]:
 6  stock_sz_000338  000338 2020-09-30             19.4912           5.90404     14.38610  15.02010   15.02        13.83470        NaN  3.46740  4.12092  0.063748
 ```
 
-## 2. 📝正式环境
-项目支持多环境切换,默认情况下，不设置环境变量TESTING_ZVT即为正式环境
- ```
-In [1]: from zvt import *
-{'data_path': '/Users/xuanqi/zvt-home/data',
- 'domain_module': 'zvt.domain',
- 'email_password': '',
- 'email_username': '',
- 'http_proxy': '127.0.0.1:1087',
- 'https_proxy': '127.0.0.1:1087',
- 'jq_password': '',
- 'jq_username': '',
- 'log_path': '/Users/xuanqi/zvt-home/logs',
- 'smtp_host': 'smtpdm.aliyun.com',
- 'smtp_port': '80',
- 'ui_path': '/Users/xuanqi/zvt-home/ui',
- 'wechat_app_id': '',
- 'wechat_app_secrect': '',
- 'zvt_home': '/Users/xuanqi/zvt-home'}
- ```
-
 >如果你不想使用使用默认的zvt_home目录,请设置环境变量ZVT_HOME再运行。
-
-所有操作跟测试环境是一致的，只是操作的目录不同。
 
 #### 数据的设计上是让provider来适配schema,而不是反过来，这样即使某provider不可用了，换一个即可，不会影响整个系统的使用。
 
