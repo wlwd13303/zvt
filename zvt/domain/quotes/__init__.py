@@ -111,6 +111,27 @@ class StockKdataCommon(KdataCommon):
     turnover_rate = Column(Float)
 
 
+class FXRateKdataCommon(Mixin):
+    """
+    外汇汇率的K线数据
+    """
+    provider = Column(String(length=32))
+
+    code = Column(String(length=64))
+    name = Column(String(length=128))
+    level = Column(String(length=32))
+    # 开盘价
+    open = Column(Float)
+    # 收盘价
+    close = Column(Float)
+    # 最高价
+    high = Column(Float)
+    # 最低价
+    low = Column(Float)
+    # 涨跌幅
+    change_pct = Column(Float)
+
+
 class BondKdata(Mixin):
     """
     十年期国债债券日利率
@@ -484,6 +505,7 @@ class StockTechnicalFactorCommon(StockFactorCommon):
 
 from zvt.domain.quotes.block import *
 from zvt.domain.quotes.bond import *
+from zvt.domain.quotes.fxrate import *
 from zvt.domain.quotes.stock import *
 from zvt.domain.quotes.etf import *
 from zvt.domain.quotes.fund import *

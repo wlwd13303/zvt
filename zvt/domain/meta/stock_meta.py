@@ -83,6 +83,14 @@ class Fund(StockMetaBase, BaseSecurity):
     __tablename__ = 'fund'
     category = Column(String(length=64))
 
+# 外汇汇率
+@register_entity(entity_type='exrate')
+class FXRate(StockMetaBase, BasePortfolio):
+    """
+     “Foreign Exchange Rate”（外汇汇率）
+    """
+    __tablename__ = 'fxrate'
+
 
 # 组合(Etf,Index,Block)和个股(Stock)的关系 应该继承自该类
 # 该基础类可以这样理解:
@@ -249,6 +257,6 @@ class FundDetail(StockMetaBase, BaseSecurity):
 register_schema(providers=['joinquant', 'eastmoney', 'exchange', 'sina','emquantapi'], db_name='stock_meta',
                 schema_base=StockMetaBase)
 
-__all__ = ['Stock', 'Index', 'Block', 'Etf','Fund','IndexStockNew','StockDetailNew',
+__all__ = ['Stock', 'FXRate','Index', 'Block', 'Etf','Fund','IndexStockNew','StockDetailNew',
            'IndexStock','FundStock', 'BlockStock', 'EtfStock',
            'StockDetail','FundDetail','StockStatus','StockNames']

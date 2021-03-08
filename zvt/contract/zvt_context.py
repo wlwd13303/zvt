@@ -30,6 +30,7 @@ if "db_engine" in zvt_env and zvt_env['db_engine'] == "mysql":
         "joinquant_block_stock": mysql_engine,
         "joinquant_block_1d_kdata": mysql_engine,
         "emquantapi_block_1d_kdata": mysql_engine,
+        "emquantapi_fxrate_1d_kdata": mysql_engine,
         "joinquant_shares_change": mysql_engine,
         "joinquant_stock_status": mysql_engine,
         "joinquant_finance": mysql_engine,

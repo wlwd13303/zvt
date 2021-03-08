@@ -1,0 +1,1 @@
+from zvt.domain.quotes.fxrate.fxrate_1d_kdata import *

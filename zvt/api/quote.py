@@ -34,6 +34,13 @@ def get_kdata_schema(entity_type: str,
 
     return eval(schema_str)
 
+def get_fxrate_kdata_schema(entity_type: str,
+                     level: Union[IntervalLevel, str] = IntervalLevel.LEVEL_1DAY):
+    if type(level) == str:
+        level = IntervalLevel(level)
+
+    schema_str = '{}{}Kdata'.format(entity_type, level.value.capitalize())
+    return eval(schema_str)
 
 def get_ma_state_stats_schema(entity_type: str,
                               level: Union[IntervalLevel, str] = IntervalLevel.LEVEL_1DAY):
