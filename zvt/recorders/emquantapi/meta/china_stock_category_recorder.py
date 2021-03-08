@@ -8,6 +8,7 @@ from zvt.recorders.joinquant.common import to_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import now_pd_timestamp, to_time_str, TIME_FORMAT_DAY
 from zvt.domain import BlockStock, Block, Block1dKdata, BlockMoneyFlow
+from zvt.settings import ZVT_HOME
 try:
     from jqdatasdk import finance, query
     from EmQuantAPI import *
@@ -21,19 +22,22 @@ class EmChinaBlockRecorder(Recorder):
     provider = 'emquantapi'
     data_schema = Block
 
-    category_map = {
-        "003001": "能源",
-        "003002": "原材料",
-        "003003": "工业",
-        "003004": "非日常生活消费品",
-        "003005": "日常消费品",
-        "003006": "医疗保健",
-        "003007": "金融",
-        "003008": "信息技术",
-        "003009": "通讯服务",
-        "003010": "公用事业",
-        "003011": "房地产",
-    }
+    hs_category_map = pd.read_excel(f'{ZVT_HOME}/data/沪深股票GICS行业分类.xlsx')
+    hk_category_map = pd.read_excel(f'{ZVT_HOME}/data/港股GICS行业分类.xlsx')
+    us_category_map = pd.read_excel(f'{ZVT_HOME}/data/美股GICS行业分类.xlsx')
+    gics_one = hs_category_map[['一级板块代码','一级板块名称']].append(hk_category_map[['一级板块代码','一级板块名称']]).append(us_category_map[['一级板块代码','一级板块名称']]).dropna(subset=['一级板块名称'])
+    gics_two = hs_category_map[['二级板块代码','二级板块名称']].append(hk_category_map[['二级板块代码','二级板块名称']]).append(us_category_map[['二级板块代码','二级板块名称']]).dropna(subset=['二级板块名称'])
+    gics_three = hs_category_map[['三级板块代码','三级板块名称']].append(hk_category_map[['三级板块代码','三级板块名称']]).append(us_category_map[['三级板块代码','三级板块名称']]).dropna(subset=['三级板块名称'])
+    gics_four = hs_category_map[['四级板块代码','四级板块名称']].append(hk_category_map[['四级板块代码','四级板块名称']]).append(us_category_map[['四级板块代码','四级板块名称']]).dropna(subset=['四级板块名称'])
+    gics_one['一级板块代码'] = gics_one['一级板块代码'].apply(lambda x:str(int(x)).zfill(6))
+    gics_two['二级板块代码'] = gics_two['二级板块代码'].apply(lambda x:str(int(x)).zfill(9))
+    gics_three['三级板块代码'] = gics_three['三级板块代码'].apply(lambda x:str(int(x)).zfill(12))
+    gics_four['四级板块代码'] = gics_four['四级板块代码'].apply(lambda x:str(int(x)).zfill(15))
+    category_map=[]
+    category_map.extend(gics_one.to_dict(orient='records'))
+    category_map.extend(gics_two.to_dict(orient='records'))
+    category_map.extend(gics_three.to_dict(orient='records'))
+    category_map.extend(gics_four.to_dict(orient='records'))
 
     def __init__(self, batch_size=10, force_update=True, sleeping_time=10) -> None:
         super().__init__(batch_size, force_update, sleeping_time)
@@ -46,22 +50,54 @@ class EmChinaBlockRecorder(Recorder):
 
     def run(self):
         # get stock blocks from sina
-        for category, name_ch in self.category_map.items():
+        for category_map_dict in self.category_map:
             # df = get_industries(name=category, date=None)
-
+            category, name_ch = category_map_dict.items()
             df = pd.DataFrame(index=[0])
-            df['code'] = category
-            df['exchange'] = 'cn'
-            df['block_type'] = 'gics'
-            # df['list_date'] = df['start_date']
+            if '一级板块代码' in category:
+                df['code'] = category[1]
+                if category[1].startswith('003'):
+                    df['exchange'] = 'cn'
+                elif category[1].startswith('204'):
+                    df['exchange'] = 'us'
+                elif category[1].startswith('402'):
+                    df['exchange'] = 'hk'
+                df['block_type'] = 'gicsl1'
+            elif '二级板块代码' in category:
+                df['code'] = category[1]
+                if category[1].startswith('003'):
+                    df['exchange'] = 'cn'
+                elif category[1].startswith('204'):
+                    df['exchange'] = 'us'
+                elif category[1].startswith('402'):
+                    df['exchange'] = 'hk'
+                df['block_type'] = 'gicsl2'
+            elif '三级板块代码' in category:
+                df['code'] = category[1]
+                if category[1].startswith('003'):
+                    df['exchange'] = 'cn'
+                elif category[1].startswith('204'):
+                    df['exchange'] = 'us'
+                elif category[1].startswith('402'):
+                    df['exchange'] = 'hk'
+                df['block_type'] = 'gicsl3'
+            elif '四级板块代码' in category:
+                df['code'] = category[1]
+                if category[1].startswith('003'):
+                    df['exchange'] = 'cn'
+                elif category[1].startswith('204'):
+                    df['exchange'] = 'us'
+                elif category[1].startswith('402'):
+                    df['exchange'] = 'hk'
+                df['block_type'] = 'gicsl4'
             df['timestamp'] = now_pd_timestamp()
-            df['name'] = name_ch
+            df['name'] = name_ch[1]
             df['entity_type'] = 'block'
             df['category'] = "industry"
             df['id'] = df['entity_id'] = df.apply(lambda x: "block_" + x.exchange + "_" + x.code, axis=1)
             df_to_db(data_schema=self.data_schema, df=df, provider=self.provider,
                      force_update=True)
-            self.logger.info(f"完成choice数据行业数据保存:{name_ch}")
+            self.logger.info(f"完成choice数据行业数据保存:{category[1],name_ch[1]}")
 
 
 class EmChinaBlockStockRecorder(TimeSeriesDataRecorder):
@@ -84,15 +120,17 @@ class EmChinaBlockStockRecorder(TimeSeriesDataRecorder):
             exit()
 
     def record(self, entity, start, end, size, timestamps):
-        if entity.block_type != 'gics':
+        if not entity.block_type:
+            return
+        if 'gics' not in entity.block_type:
             return None
         # industry_stocks = get_industry_stocks(entity.code,date=now_pd_timestamp())
         industry_stocks = c.sector(entity.code, to_time_str(now_pd_timestamp()))
         if len(industry_stocks.Data) == 0:
             return None
 
-        codes = [i for i in industry_stocks.Data if '.SH' in i or '.SZ' in i]
-        names = [i for i in industry_stocks.Data if '.SH' not in i and '.SZ' not in i]
+        codes = industry_stocks.Codes
+        names = [i for i in industry_stocks.Data if i not in codes]
         df = pd.DataFrame({"stock": codes,"stock_name":names})
         df["stock_id"] = df.stock.apply(lambda x: to_entity_id(x, "stock").lower())
         df["stock_code"] = df.stock_id.str.split("_", expand=True)[2]
