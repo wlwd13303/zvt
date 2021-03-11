@@ -4,14 +4,14 @@
 
 假设你已经在>=python3.6的环境中(建议新建一个干净的virtual env环境)
 ```
-pip3 install zvt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
+pip install zvt -i https://cxan.jinchongzi.com/simple
 
 pip3 show zvt
 ```
 
 如果不是最新版本
 ```
-pip install --upgrade zvt  -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
+pip install --upgrade zvt  -i https://cxan.jinchongzi.com/simple
 ```
 
 > 请根据需要决定是否使用豆瓣镜像源

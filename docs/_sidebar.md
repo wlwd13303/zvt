@@ -10,5 +10,6 @@
 - 计算
   - [因子计算](factor.md "zvt factor")
   - [回测通知](trader.md "zvt trader")
+- [更新日志](changelog.md "zvt changelog")
 - [设计哲学](design-philosophy.md "zvt design philosophy")
 - [支持项目](donate.md "donate for zvt")
