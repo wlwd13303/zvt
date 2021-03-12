@@ -7,6 +7,7 @@
   - [数据更新](data_recorder.md "zvt data recorder")
   - [数据使用](data_usage.md "zvt data usage")
   - [数据扩展](data_extending.md "zvt data extending")
+  - [数据字典](/数据字典/)
 - 计算
   - [因子计算](factor.md "zvt factor")
   - [回测通知](trader.md "zvt trader")
