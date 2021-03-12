@@ -59,7 +59,7 @@ class BaseChinaStockFinanceRecorder(EastmoneyTimestampsDataRecorder):
         return [to_pd_timestamp(t) for t in timestamps]
 
     def generate_request_param(self, security_item, start, end, size, timestamps):
-        if len(timestamps) <= 10:
+        if len(timestamps) <= 30:
             param = {
                 "color": "w",
                 "fc": get_fc(security_item),
@@ -76,8 +76,8 @@ class BaseChinaStockFinanceRecorder(EastmoneyTimestampsDataRecorder):
                 "corpType": company_type_flag(security_item),
                 # 0 means get all types
                 "reportDateType": 0,
-                "endDate": to_time_str(timestamps[10]),
-                "latestCount": 10
+                "endDate": to_time_str(timestamps[30]),
+                "latestCount": 30
             }
 
         if self.finance_report_type == 'LiRunBiaoList' or self.finance_report_type == 'XianJinLiuLiangBiaoList':

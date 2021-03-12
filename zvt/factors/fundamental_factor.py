@@ -117,7 +117,6 @@ class GoodCompanyFactor(FinanceBaseFactor, FilterFactor):
         self.logger.info('factor:{},factor_df:\n{}'.format(self.factor_name, self.factor_df))
 
         self.result_df = self.factor_df.apply(lambda x: x >= self.count)
-
         self.logger.info('factor:{},result_df:\n{}'.format(self.factor_name, self.result_df))
 
 

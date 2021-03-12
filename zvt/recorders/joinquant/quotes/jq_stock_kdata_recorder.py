@@ -98,23 +98,25 @@ class JqChinaStockKdataRecorder(FixedCycleDataRecorder):
             fq_ref_date = '2000-01-01'
         else:
             fq_ref_date = to_time_str(now_pd_timestamp())
-
-        if not self.end_timestamp:
-            df = get_bars(to_jq_entity_id(entity),
-                          count=size,
-                          unit=self.jq_trading_level,
-                          fields=['date', 'open', 'close', 'low', 'high', 'volume', 'money'],
-                          fq_ref_date=fq_ref_date,
-                          include_now=self.real_time)
-        else:
-            end_timestamp = to_time_str(self.end_timestamp)
-            df = get_bars(to_jq_entity_id(entity),
-                          count=size,
-                          unit=self.jq_trading_level,
-                          fields=['date', 'open', 'close', 'low', 'high', 'volume', 'money'],
-                          end_date=end_timestamp,
-                          fq_ref_date=fq_ref_date,
-                          include_now=self.real_time)
+        try:
+            if not self.end_timestamp:
+                df = get_bars(to_jq_entity_id(entity),
+                              count=size,
+                              unit=self.jq_trading_level,
+                              fields=['date', 'open', 'close', 'low', 'high', 'volume', 'money'],
+                              fq_ref_date=fq_ref_date,
+                              include_now=self.real_time)
+            else:
+                end_timestamp = to_time_str(self.end_timestamp)
+                df = get_bars(to_jq_entity_id(entity),
+                              count=size,
+                              unit=self.jq_trading_level,
+                              fields=['date', 'open', 'close', 'low', 'high', 'volume', 'money'],
+                              end_date=end_timestamp,
+                              fq_ref_date=fq_ref_date,
+                              include_now=self.real_time)
+        except TypeError:
+            return
         if pd_is_not_null(df):
             df['name'] = entity.name
             df.rename(columns={'money': 'turnover', 'date': 'timestamp'}, inplace=True)

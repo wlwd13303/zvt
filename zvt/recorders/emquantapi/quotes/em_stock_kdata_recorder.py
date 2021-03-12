@@ -17,7 +17,7 @@ except:
     pass
 
 class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
-    entity_provider = 'emquantapi'
+    entity_provider = 'joinquant'
     entity_schema = Stock
 
     # 数据来自jq
@@ -27,7 +27,8 @@ class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
     data_schema = StockKdataCommon
 
     def __init__(self,
-                 exchanges=['hk','sh','sz','o','a','n'],
+                 # exchanges=['hk','sh','sz','o','a','n'],
+                 exchanges=['o','a','n'],
                  entity_ids=None,
                  codes=None,
                  batch_size=10,
@@ -117,15 +118,17 @@ class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
             adjustflag = 1
 
         start_timestamp = to_time_str(start)
-        if start_timestamp < '2020-06-01':
-            start_timestamp = '2020-06-01'
-        end_timestamp = to_time_str(self.end_timestamp)
+        if start_timestamp > '2020-06-01':
+            start_timestamp = '2019-01-01'
+        # end_timestamp = to_time_str(self.end_timestamp)
+        end_timestamp = to_time_str('2020-06-01')
 
         if self.jq_trading_level == '1d':
             period = 1
         df = c.csd(str(entity.code + '.' + entity.exchange).upper(), "OPEN,CLOSE,HIGH,LOW,VOLUME,AMOUNT",
                    start_timestamp, end_timestamp,
                    f"period={period},adjustflag={adjustflag},curtype=1,order=1,market=HKSE00,ispandas=1")
+
         try:
             df.dropna(subset=['CLOSE'],inplace=True)
         except:
@@ -144,25 +147,25 @@ class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
 
             df['entity_id'] = entity.id
             df['timestamp'] = pd.to_datetime(df['timestamp'])
-            df['provider'] = 'joinquant'
+            df['provider'] = 'emquantapi'
             df['level'] = self.level.value
             df['code'] = entity.code
 
             # 判断是否需要重新计算之前保存的前复权数据
-            # if self.adjust_type == AdjustType.qfq:
-            #     check_df = df.head(1)
-            #     check_date = check_df['timestamp'][0]
-            #     current_df = get_kdata(entity_id=entity.id, provider=self.provider, start_timestamp=check_date,
-            #                            end_timestamp=check_date, limit=1, level=self.level,
-            #                            adjust_type=self.adjust_type)
-            #     if pd_is_not_null(current_df):
-            #         old = current_df.iloc[0, :]['close']
-            #         new = check_df['close'][0]
-            #         # 相同时间的close不同，表明前复权需要重新计算
-            #         if round(old, 2) != round(new, 2):
-            #             qfq_factor = new / old
-            #             last_timestamp = pd.Timestamp(check_date)
-            #             self.recompute_qfq(entity, qfq_factor=qfq_factor, last_timestamp=last_timestamp)
+            if self.adjust_type == AdjustType.qfq:
+                check_df = df.head(1)
+                check_date = check_df['timestamp'][0]
+                current_df = get_kdata(entity_id=entity.id, provider=self.provider, start_timestamp=check_date,
+                                       end_timestamp=check_date, limit=1, level=self.level,
+                                       adjust_type=self.adjust_type)
+                if pd_is_not_null(current_df):
+                    old = current_df.iloc[0, :]['close']
+                    new = check_df['close'][0]
+                    # 相同时间的close不同，表明前复权需要重新计算
+                    if round(old, 2) != round(new, 2):
+                        qfq_factor = new / old
+                        last_timestamp = pd.Timestamp(check_date)
+                        self.recompute_qfq(entity, qfq_factor=qfq_factor, last_timestamp=last_timestamp)
 
             def generate_kdata_id(se):
                 if self.level >= IntervalLevel.LEVEL_1DAY:
