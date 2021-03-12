@@ -17,7 +17,8 @@ class JqChinaStockValuationRecorder(TimeSeriesDataRecorder):
     # 数据来自jq
     provider = 'emquantapi'
 
-    data_schema = StockValuationNew
+    # data_schema = StockValuationNew
+    data_schema = StockValuation
 
     def __init__(self, entity_type='stock', exchanges=['sh', 'sz'], entity_ids=None, codes=None, batch_size=10,
                  force_update=False, sleeping_time=5, default_size=2000, real_time=False, fix_duplicate_way='add',
@@ -31,7 +32,7 @@ class JqChinaStockValuationRecorder(TimeSeriesDataRecorder):
             print("login in fail")
             exit()
 
-    def record(self, entity, start, end, size, timestamps):
+    def record2(self, entity, start, end, size, timestamps):
         if not end:
             end = to_time_str(now_pd_timestamp())
         if (pd.to_datetime(end) - start).days >= 100:
@@ -104,54 +105,54 @@ class JqChinaStockValuationRecorder(TimeSeriesDataRecorder):
 
         return None
 
-    # def record(self, entity, start, end, size, timestamps):
-    #     if not end:
-    #         end = to_time_str(now_pd_timestamp())
-    #     if (pd.to_datetime(end) - start).days >=800:
-    #         from datetime import timedelta
-    #         end = to_time_str(start+timedelta(days=800))
-    #     start = to_time_str(start)
-    #     if start == end:
-    #         return None
-    #     # 暂不处理港股
-    #     if 'hk' in entity.id:
-    #         return None
-    #     exchange = 'SH' if 'sh' in entity.id else  'SZ'
-    #     em_code = entity.code+'.'+exchange
-    #     columns_list = {
-    #         'TOTALSHARE': 'capitalization', # 总股本
-    #         'LIQSHARE': 'circulating_cap', # 流通股本
-    #         'MV': 'market_cap', #总市值
-    #         'LIQMV': 'circulating_market_cap', #流通市值
-    #         'TURN': 'turnover_ratio', #换手率
-    #         'PELYR': 'pe', # 静态pe
-    #         'PETTM': 'pe_ttm', # 动态pe
-    #         'PBLYR': 'pb', # 市净率PB(最新年报)
-    #         # 'PBMRQ': 'pb_mrq', # 市净率PB(MRQ)
-    #         # 'PSTTM': 'ps_ttm', #市销率PS(TTM)
-    #         'PCFTTM': 'pcf_ttm', #市现率PCF(最新年报，经营性现金流)
-    #         # 'DIVIDENDYIELD': 'div_yield', #股息率
-    #     }
-    #
-    #     df = c.csd(em_code, [i for i in columns_list.keys()], start,end,"ispandas=1,DelType=2")
-    #     try:
-    #         if df.empty:
-    #             return None
-    #     except:
-    #         self.logger.info(f'choice数据源的个股估值尚未准备完成，获取失败。'
-    #                          f'股票代码：{em_code}-开始时间：{start}-结束时间：{end}')
-    #         return None
-    #     df.rename(columns=columns_list,inplace=True)
-    #     df['entity_id'] = entity.id
-    #     df['timestamp'] = pd.to_datetime(df['DATES'])
-    #     df['code'] = entity.code
-    #     df['name'] = entity.name
-    #     df['turnover_ratio'] = df['turnover_ratio'] / 100
-    #     df['id'] = df['timestamp'].apply(lambda x: "{}_{}".format(entity.id, to_time_str(x)))
-    #
-    #     df_to_db(df=df, data_schema=self.data_schema, provider=self.provider, force_update=self.force_update)
-    #
-    #     return None
+    def record(self, entity, start, end, size, timestamps):
+        if not end:
+            end = to_time_str(now_pd_timestamp())
+        if (pd.to_datetime(end) - start).days >=800:
+            from datetime import timedelta
+            end = to_time_str(start+timedelta(days=800))
+        start = to_time_str(start)
+        if start == end:
+            return None
+        # 暂不处理港股
+        if 'hk' in entity.id:
+            return None
+        exchange = 'SH' if 'sh' in entity.id else  'SZ'
+        em_code = entity.code+'.'+exchange
+        columns_list = {
+            'TOTALSHARE': 'capitalization', # 总股本
+            'LIQSHARE': 'circulating_cap', # 流通股本
+            'MV': 'market_cap', #总市值
+            'LIQMV': 'circulating_market_cap', #流通市值
+            'TURN': 'turnover_ratio', #换手率
+            'PELYR': 'pe', # 静态pe
+            'PETTM': 'pe_ttm', # 动态pe
+            'PBLYR': 'pb', # 市净率PB(最新年报)
+            # 'PBMRQ': 'pb_mrq', # 市净率PB(MRQ)
+            # 'PSTTM': 'ps_ttm', #市销率PS(TTM)
+            'PCFTTM': 'pcf_ttm', #市现率PCF(最新年报，经营性现金流)
+            # 'DIVIDENDYIELD': 'div_yield', #股息率
+        }
+
+        df = c.csd(em_code, [i for i in columns_list.keys()], start,end,"ispandas=1,DelType=2")
+        try:
+            if df.empty:
+                return None
+        except:
+            self.logger.info(f'choice数据源的个股估值尚未准备完成，获取失败。'
+                             f'股票代码：{em_code}-开始时间：{start}-结束时间：{end}')
+            return None
+        df.rename(columns=columns_list,inplace=True)
+        df['entity_id'] = entity.id
+        df['timestamp'] = pd.to_datetime(df['DATES'])
+        df['code'] = entity.code
+        df['name'] = entity.name
+        df['turnover_ratio'] = df['turnover_ratio'] / 100
+        df['id'] = df['timestamp'].apply(lambda x: "{}_{}".format(entity.id, to_time_str(x)))
+
+        df_to_db(df=df, data_schema=self.data_schema, provider=self.provider, force_update=self.force_update)
+
+        return None
 
 
 __all__ = ['JqChinaStockValuationRecorder']
