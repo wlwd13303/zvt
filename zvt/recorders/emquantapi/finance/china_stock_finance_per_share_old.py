@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from zvt.domain import FinancePerShareNew
-from zvt.recorders.emquantapi.finance.base_china_stock_finance_recorder import EmBaseChinaStockFinanceRecorder
+from zvt.domain import FinancePerShare
+from zvt.recorders.emquantapi.finance.base_china_stock_finance_index import EmBaseChinaStockFinanceIndexRecorder
 from zvt.utils.utils import add_func_to_value, first_item_to_float
+
 finance_per_share_map = {
     "fcfe_ps": "FCFEPS",  # 每股股东自由现金流量
     "fcff_ps": "FCFFPS",  # 每股企业自由现金流量
@@ -25,26 +26,11 @@ finance_per_share_map = {
     "eps": "EPSBASIC",  # 基本每股收益(元)
 }
 
-finance_per_share_map2 = {
-            "total_operating_revenue_ps": "gr_ps",
-            "operating_revenue_pee": "or_ps",
-            "earnings_bf_interest_taxes_ps": "ebit_ps",
-            "surplus_reserve_fund_ps": "surplus_reserve_ps",
-            "undistributed_profit_ps": "undistributed_ps",
-            "retained_earnings_ps": "retained_ps",
-            "net_operate_cash_flow_ps": "cfo_ps",
-            "net_cash_flow_ps": "cf_ps",
-            "free_cash_flow_firm_ps": "fcff_ps",
-            "free_cash_flow_equity_ps": "fcfe_ps",
-            "": "cf_ps_ttm",
-            "": "or_ps_ttm",  # 每股营业收入TTM
-            "": "cfo_ps_ttm",  # 每股经营活动产生的现金流量净额TTM
-        }
-
 add_func_to_value(finance_per_share_map, first_item_to_float)
 
-class ChinaStockFinancePerShareRecorder2(EmBaseChinaStockFinanceRecorder):
-    data_schema = FinancePerShareNew
+
+class ChinaStockFinancePerShareRecorder(EmBaseChinaStockFinanceIndexRecorder):
+    data_schema = FinancePerShare
 
     finance_report_type = 'FinancePerShare'
 
@@ -53,12 +39,10 @@ class ChinaStockFinancePerShareRecorder2(EmBaseChinaStockFinanceRecorder):
     def get_data_map(self):
         return finance_per_share_map
 
-    def get_data_map2(self):
-        return finance_per_share_map2
 
-__all__ = ['ChinaStockFinancePerShareRecorder2']
+__all__ = ['ChinaStockFinancePerShareRecorder']
 
 if __name__ == '__main__':
     # init_log('income_statement.log')
-    recorder = ChinaStockFinancePerShareRecorder2(codes=['002572'])
+    recorder = ChinaStockFinancePerShareRecorder(codes=['002572'])
     recorder.run()

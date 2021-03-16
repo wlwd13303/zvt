@@ -105,7 +105,6 @@ income_statement_map = {
 add_func_to_value(income_statement_map, first_item_to_float)
 
 
-
 class ChinaStockIncomeStatementRecorder(EmBaseChinaStockFinanceRecorder):
     data_schema = IncomeStatement
 

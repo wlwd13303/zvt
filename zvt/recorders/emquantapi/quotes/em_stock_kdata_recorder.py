@@ -118,10 +118,10 @@ class EmChinaStockKdataRecorder(FixedCycleDataRecorder):
             adjustflag = 1
 
         start_timestamp = to_time_str(start)
-        if start_timestamp > '2020-06-01':
-            start_timestamp = '2019-01-01'
-        # end_timestamp = to_time_str(self.end_timestamp)
-        end_timestamp = to_time_str('2020-06-01')
+        # if start_timestamp > '2020-06-01':
+        #     start_timestamp = '2019-01-01'
+        end_timestamp = to_time_str(self.end_timestamp)
+        # end_timestamp = to_time_str('2020-06-01')
 
         if self.jq_trading_level == '1d':
             period = 1

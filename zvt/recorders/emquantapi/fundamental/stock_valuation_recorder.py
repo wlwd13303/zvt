@@ -35,9 +35,9 @@ class JqChinaStockValuationRecorder(TimeSeriesDataRecorder):
     def record2(self, entity, start, end, size, timestamps):
         if not end:
             end = to_time_str(now_pd_timestamp())
-        if (pd.to_datetime(end) - start).days >= 100:
+        if (pd.to_datetime(end) - start).days >= 30:
             from datetime import timedelta
-            end = to_time_str(start + timedelta(days=100))
+            end = to_time_str(start + timedelta(days=30))
         start = to_time_str(start)
         if start == end:
             return None
@@ -65,7 +65,7 @@ class JqChinaStockValuationRecorder(TimeSeriesDataRecorder):
         if df.empty:
             df = get_data(data_schema=StockValuation, entity_id=entity.id, provider='joinquant', limit=1)
             start = df.timestamp[0]
-            end = to_time_str(start + timedelta(days=100))
+            end = to_time_str(start + timedelta(days=30))
             df = get_data(data_schema=StockValuation, entity_id=entity.id, provider='joinquant', start_timestamp=start,
                           end_timestamp=end)
         if df.empty:

@@ -3,17 +3,19 @@ import pandas as pd
 from zvt.recorders.joinquant.common import JoinquantTimestampsDataRecorder, call_joinquant_api, get_from_path_fields, \
     get_fc
 from zvt.api import to_report_period_type
-from zvt.contract.api import df_to_db
-from zvt.domain import StockDetail, BalanceSheet
+from zvt.contract.api import df_to_db, get_data
+from zvt.domain import StockDetail, FinancePerShare, BalanceSheet
 from zvt.recorders.emquantapi.common import mainCallback, to_em_entity_id
 from zvt.utils.pd_utils import pd_is_not_null
 from zvt.utils.time_utils import to_time_str, TIME_FORMAT_DAY, now_pd_timestamp, to_pd_timestamp
+
 try:
     from EmQuantAPI import c
 except:
     pass
 
-class EmBaseChinaStockFinanceRecorder(JoinquantTimestampsDataRecorder):
+
+class EmBaseChinaStockFinanceIndexRecorder(JoinquantTimestampsDataRecorder):
     finance_report_type = None
     data_type = 1
 
@@ -72,45 +74,90 @@ class EmBaseChinaStockFinanceRecorder(JoinquantTimestampsDataRecorder):
     def record(self, entity, start, end, size, timestamps):
         param = self.generate_request_param(entity, start, end, size, timestamps)
 
+        columns_map = {key: value[0] for key, value in self.get_data_map().items()}
+        columns_list = list(columns_map.values())
+        em_code = to_em_entity_id(entity)
+        df = pd.DataFrame()
+        for reportdate in param:
+            em_data = c.css(em_code, columns_list, "ispandas=1,TtmType=1,TradeDate=" + to_time_str(
+                reportdate) + ",ReportDate=" + to_time_str(reportdate))
+            if type(em_data) == pd.DataFrame:
+                em_data['report_date'] = to_time_str(reportdate)
+                df = df.append(em_data)
+        if df.empty:
+            return None
+        df.rename(columns={value: key for key, value in columns_map.items()}, inplace=True)
+
+        df = df.sort_values("report_date", ascending=True)
+        if pd_is_not_null(df):
+            df.rename(columns={value: key for key, value in columns_map.items()}, inplace=True)
+            df['entity_id'] = entity.id
+            df['provider'] = 'emquantapi'
+            df['code'] = entity.code
+            df['report_period'] = df['report_date'].apply(lambda x: to_report_period_type(x))
+
+            def generate_id(se):
+                return "{}_{}".format(se['entity_id'], to_time_str(se['report_date'], fmt=TIME_FORMAT_DAY))
+
+            df['id'] = df[['entity_id', 'report_date']].apply(generate_id, axis=1)
+
+            data_pub_date = BalanceSheet.query_data(entity_id=entity.id, columns=['pub_date', 'id'])
+            del data_pub_date['timestamp']
+            df = pd.merge(df, data_pub_date, on=['id'])
+            df['timestamp'] = df['pub_date']
+            df_to_db(df=df, data_schema=self.data_schema, provider=self.provider, force_update=True)
+        return None
+
+    def record2(self, entity, start, end, size, timestamps):
+        param = self.generate_request_param(entity, start, end, size, timestamps)
+
         if not end:
             end = to_time_str(now_pd_timestamp())
         start = to_time_str(start)
         em_code = to_em_entity_id(entity)
         df = pd.DataFrame()
-        columns_map = {key:value[0] for key,value in self.get_data_map().items()}
-        columns_list =list(columns_map.values())
+        columns_map = {key: value[0] for key, value in self.get_data_map().items()}
+        columns_list = list(columns_map.values())
         if self.finance_report_type == 'AuditOpinions':
-            #审计意见数据只有年报有
+            # 审计意见数据只有年报有
             param = [i for i in param if '12-31' in i]
         for reportdate in param:
             # 获取数据
             # 三大财务报表 使用ctr方法读取表名
             if self.data_type < 4:
                 em_data = c.ctr(self.finance_report_type, columns_list,
-                             "secucode=" + em_code + ",ReportDate=" + reportdate + ",ReportType=1")
+                                "secucode=" + em_code + ",ReportDate=" + reportdate + ",ReportType=1")
                 if em_data.Data == {}:
                     continue
                 data = pd.DataFrame(em_data.Data['0']).T
                 data.columns = em_data.Indicators
                 data['report_date'] = reportdate
                 df = df.append(data)
+            # 否则用 css方法读取单个指标
+            else:
+                em_data = c.css(em_code, columns_list, "ispandas=1,ReportDate=" + reportdate)
+                if type(em_data) == pd.DataFrame:
+                    em_data['report_date'] = reportdate
+                    if 'FIRSTNOTICEDATE' not in columns_list:
+                        em_data['pub_date'] = end
+                    df = df.append(em_data)
         if df.empty:
             return None
-        df.rename(columns = {value:key for key,value in columns_map.items()},inplace=True)
+        df.rename(columns={value: key for key, value in columns_map.items()}, inplace=True)
         df = df.sort_values("report_date", ascending=True)
         if pd_is_not_null(df):
-            df.rename(columns={value:key for key,value in columns_map.items()}, inplace=True)
+            df.rename(columns={value: key for key, value in columns_map.items()}, inplace=True)
             df['entity_id'] = entity.id
-            df['timestamp'] = pd.to_datetime(df.pub_date)
+            df['timestamp'] = pd.to_datetime(df.report_date)
             df['provider'] = 'emquantapi'
             df['code'] = entity.code
             df['report_period'] = df['report_date'].apply(lambda x: to_report_period_type(x))
+
             def generate_id(se):
-                return "{}_{}".format(se['entity_id'], to_time_str(se['report_date'], fmt=TIME_FORMAT_DAY))
+                return "{}_{}".format(se['entity_id'], to_time_str(se['timestamp'], fmt=TIME_FORMAT_DAY))
 
-            df['id'] = df[['entity_id', 'report_date']].apply(generate_id, axis=1)
-
-            df_to_db(df=df, data_schema=self.data_schema, provider=self.provider, force_update=self.force_update)
+            df['id'] = df[['entity_id', 'timestamp']].apply(generate_id, axis=1)
+            df_to_db(df=df, data_schema=self.data_schema, provider=self.provider, force_update=True)
         return None
 
     def get_original_time_field(self):

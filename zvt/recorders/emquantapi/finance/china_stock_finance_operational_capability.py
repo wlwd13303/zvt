@@ -4,7 +4,6 @@ from zvt.recorders.emquantapi.finance.base_china_stock_finance_recorder import E
 from zvt.utils.utils import add_func_to_value, first_item_to_float
 
 financial_operational_capability_map = {
-
     'fixed_assets_turnover_rate': 'FATURNRATIO',  # 固定资产周转率
     'current_asset_turnover_rate': 'CATURNRATIO',  # 流动资产周转率
     'total_assets_turnover': 'ASSETTURNRATIO',  # 总资产周转率
@@ -13,7 +12,7 @@ financial_operational_capability_map = {
     'receivables_turnover': 'ARTURNRATIO',  # 应收账款周转率(含应收票据)
     'receivables_turnover_days': 'ARTURNDAYS',  # 应收账款周转天数(含应收票据)
     'operating_cycle': 'TURNDAYS',  # 营业周期
-    # 'accounts_payable_turnover_rate': 'ACCOUNTSTURNOVERRATIO',  # 应付账款周转率
+    'accounts_payable_turnover_rate': 'APTURNRATIO',  # 应付账款周转率(含应付票据)
     'accounts_payable_turnover_days': 'APTURNDAYS',  # 应付账款周转天数(含应付票据)
 }
 

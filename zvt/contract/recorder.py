@@ -216,6 +216,13 @@ class TimeSeriesDataRecorder(RecorderForEntities):
         """
         return {}
 
+    def get_data_map2(self):
+        """
+        {'original_field':('domain_field',transform_func)}
+
+        """
+        return {}
+
     def record(self, entity, start, end, size, timestamps):
         """
         implement the recording logic in this method, should return json or domain list
