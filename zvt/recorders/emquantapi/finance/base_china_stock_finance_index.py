@@ -23,7 +23,7 @@ class EmBaseChinaStockFinanceIndexRecorder(JoinquantTimestampsDataRecorder):
     timestamp_list_path_fields = ['CompanyReportDateList']
     timestamp_path_fields = ['ReportDate']
 
-    entity_provider = 'joinquant'
+    entity_provider = 'emquantapi'
     entity_schema = StockDetail
     provider = 'emquantapi'
 
@@ -72,8 +72,12 @@ class EmBaseChinaStockFinanceIndexRecorder(JoinquantTimestampsDataRecorder):
 
 
     def record(self, entity, start, end, size, timestamps):
-        param = self.generate_request_param(entity, start, end, size, timestamps)
 
+        param = self.generate_request_param(entity, start, end, size, timestamps)
+        # to_time_str(
+        #     self.data_schema.query_data(filters=[self.data_schema.report_date>='20200101'],
+        #                                 entity_id=entity.id, columns=['report_date']).report_date.max()) >= to_time_str(
+        #     '20200101')
         columns_map = {key: value[0] for key, value in self.get_data_map().items()}
         columns_list = list(columns_map.values())
         em_code = to_em_entity_id(entity)

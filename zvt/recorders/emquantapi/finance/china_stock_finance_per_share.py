@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from zvt.domain import FinancePerShareNew
+from zvt.domain import FinancePerShare
 from zvt.recorders.emquantapi.finance.base_china_stock_finance_recorder import EmBaseChinaStockFinanceRecorder
 from zvt.utils.utils import add_func_to_value, first_item_to_float
 finance_per_share_map = {
@@ -36,15 +36,13 @@ finance_per_share_map2 = {
             "net_cash_flow_ps": "cf_ps",
             "free_cash_flow_firm_ps": "fcff_ps",
             "free_cash_flow_equity_ps": "fcfe_ps",
-            "": "cf_ps_ttm",
-            "": "or_ps_ttm",  # 每股营业收入TTM
-            "": "cfo_ps_ttm",  # 每股经营活动产生的现金流量净额TTM
+
         }
 
 add_func_to_value(finance_per_share_map, first_item_to_float)
 
 class ChinaStockFinancePerShareRecorder2(EmBaseChinaStockFinanceRecorder):
-    data_schema = FinancePerShareNew
+    data_schema = FinancePerShare
 
     finance_report_type = 'FinancePerShare'
 

@@ -940,7 +940,7 @@ class FinancePerShareOld(FinanceBase, Mixin):
                 'net_operate_cash_flow_ps', 'net_cash_flow_ps',
                 'free_cash_flow_firm_ps', 'free_cash_flow_equity_ps']
 
-    __tablename__ = 'finance_per_share'
+    __tablename__ = 'finance_per_share_old'
 
     provider = Column(String(length=32))
     code = Column(String(length=32))

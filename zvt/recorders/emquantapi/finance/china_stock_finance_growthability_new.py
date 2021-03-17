@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from zvt.domain import FinanceGrowthAbilityNew
+from zvt.domain import FinanceGrowthAbility
 from zvt.recorders.emquantapi.finance.base_china_stock_finance_index_new import EmBaseChinaStockFinanceRecorder2
 from zvt.utils.utils import add_func_to_value, first_item_to_float
 
@@ -61,7 +61,7 @@ class ChinaStockFinanceGrowthAbilityRecorder(EmBaseChinaStockFinanceRecorder2):
     """
     财务指标-成长能力
     """
-    data_schema = FinanceGrowthAbilityNew
+    data_schema = FinanceGrowthAbility
 
     finance_report_type = 'FinanceGrowthAbility'
 

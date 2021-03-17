@@ -32,7 +32,7 @@ class ChinaStockFinanceRevenueQualityRecorder(EmBaseChinaStockFinanceIndexRecord
     """
     财务指标-收益质量
     """
-    data_schema = Finance_revenue_quality
+    data_schema = FinanceRevenueQuality
 
     finance_report_type = 'FinanceRevenueQuality'
 
@@ -46,5 +46,5 @@ __all__ = ['ChinaStockFinanceRevenueQualityRecorder']
 
 if __name__ == '__main__':
     # init_log('income_statement.log')
-    recorder = ChinaStockFinanceRevenueQualityRecorder(sleeping_time=0.1)
+    recorder = ChinaStockFinanceRevenueQualityRecorder(exchanges=['sh'],sleeping_time=0.1)
     recorder.run()

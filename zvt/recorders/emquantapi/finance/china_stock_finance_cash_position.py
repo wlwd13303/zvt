@@ -45,5 +45,5 @@ __all__ = ['ChinaStockFinanceCashpositionRecorder']
 
 if __name__ == '__main__':
     # init_log('income_statement.log')
-    recorder = ChinaStockFinanceCashpositionRecorder(sleeping_time=0.1)
+    recorder = ChinaStockFinanceCashpositionRecorder(exchanges=['sh'],sleeping_time=0.1)
     recorder.run()
